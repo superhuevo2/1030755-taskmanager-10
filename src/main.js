@@ -414,21 +414,18 @@ const render = function (element, container) {
 };
 
 const menuContainer = document.querySelector(`.main__control`);
-render(createMenu(), menuContainer);
-
 const main = document.querySelector(`.main`);
-render(createMainFilter(), main);
-render(createBoardContainer(), main);
 
-const boardContainer = document.querySelector(`.board`);
-render(createBoardFilter(), boardContainer);
-render(createTaskList(), boardContainer);
+render(createMenu(), menuContainer);
+render(createMainFilter(), main);
+render(createBoardTemplate(), main);
 
 const boardTasks = document.querySelector(`.board__tasks`);
 render(createEditCardForm(), boardTasks);
 
-for (let i = 0; i < 3; i++) {
+Array.apply(null, {length: CARD_COUNT}).forEach(() => {
   render(createCard(), boardTasks);
-}
+});
 
-render(createLoadMoreBtn(), boardContainer);
+const boardContainer = document.querySelector(`.board`);
+render(createLoadMoreButton(), boardContainer);
