@@ -1,4 +1,67 @@
-const createCard = function () {
+
+
+const month = [
+  `January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`
+];
+
+function addHashTags(tagSet) {
+  let fragment = ``;
+  tagSet.forEach((element) => {
+    const template = (
+      `<span class="card__hashtag-inner">
+        <span class="card__hashtag-name">
+          #${element}
+        </span>
+      </span>
+      `
+    )
+    fragment += template;
+  });
+  return fragment;
+};
+
+function addDate(dateObj) {
+  let date;
+  if (dateObj) {
+    date = `${dateObj.getDate()} ${month[dateObj.getMonth()]}`;
+  } else {
+    date = ``;
+  };
+  return date;
+}
+
+function addTime(dateObj) {
+  let hours,
+      minutes,
+      time;
+  if (dateObj) {
+    hours = dateObj.getHours();
+    minutes = dateObj.getMinutes();
+    time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
+  } else {
+    time = ``;
+  };
+  return time;
+}
+
+const createCard = function (task) {
+  const description = task.description;
+  const date = addDate(task.dueDate);
+  const time = addTime(task.dueDate)
+  const hashTags = addHashTags(task.tags);
+
+
   return (
     `<article class="card card--black">
       <div class="card__form">
@@ -25,7 +88,7 @@ const createCard = function () {
           </div>
 
           <div class="card__textarea-wrap">
-            <p class="card__text">Example default task with default color.</p>
+            <p class="card__text">${description}.</p>
           </div>
 
           <div class="card__settings">
@@ -33,31 +96,15 @@ const createCard = function () {
               <div class="card__dates">
                 <div class="card__date-deadline">
                   <p class="card__input-deadline-wrap">
-                    <span class="card__date">23 September</span>
-                    <span class="card__time">11:15 PM</span>
+                    <span class="card__date">${date}</span>
+                    <span class="card__time">${time}</span>
                   </p>
                 </div>
               </div>
 
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
-                  <span class="card__hashtag-inner">
-                    <span class="card__hashtag-name">
-                      #todo
-                    </span>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <span class="card__hashtag-name">
-                      #personal
-                    </span>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <span class="card__hashtag-name">
-                      #important
-                    </span>
-                  </span>
+                  ${hashTags}
                 </div>
               </div>
             </div>
