@@ -10,6 +10,7 @@ const ONE_WEEK_IN_MS = ONE_DAY_IN_MS * 7;
 const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
 const TAGS = [`homework`, `theory`, `practice`, `intensive`, `kek`];
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
+const TASK_COUNT = 8;
 
 /**
  * return random integer. from <= integer < to.
@@ -72,4 +73,6 @@ function genTaskList(count) {
   return taskList;
 }
 
-export {genTaskList};
+const taskList = genTaskList(TASK_COUNT)
+
+export {taskList};
