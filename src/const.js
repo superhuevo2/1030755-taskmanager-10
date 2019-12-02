@@ -22,4 +22,6 @@ const Month = [
   `December`
 ];
 
-export {DescriptionItems, Tags, Colors, Month};
+const Filters = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
+
+export {DescriptionItems, Tags, Colors, Month, Filters};

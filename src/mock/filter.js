@@ -1,6 +1,4 @@
-import {taskList} from './task.js';
-
-const FILTER_NAME = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
+import {Filters} from '../const.js';
 
 function isToday(dateObject) {
   if (dateObject === null) {
@@ -21,72 +19,44 @@ function isRepeating(dayDict) {
   return false;
 }
 
-function getCount(filter, tasks) {
-  let count = 0;
-  switch (filter) {
-    case `all`:
-      count = tasks.length;
-      break;
-    case `overdue`:
-      tasks.forEach(function (element) {
-        if (element.dueDate !== null && element.dueDate.getTime() > Date.now()) {
-          count += 1;
-        }
-      });
-      break;
-    case `today`:
-      tasks.forEach(function (element) {
-        if (isToday(element.dueDate)) {
-          count += 1;
-        }
-      });
-      break;
-    case `favorite`:
-      tasks.forEach(function (element) {
-        if (element.isFavorite) {
-          count += 1;
-        }
-      });
-      break;
-    case `repeating`:
-      tasks.forEach(function (element) {
-        if (isRepeating(element.repeatingDays)) {
-          count += 1;
-        }
-      });
-      break;
-    case `tags`:
-      tasks.forEach(function (element) {
-        if (element.tags.size) {
-          count += 1;
-        }
-      });
-      break;
-    case `archive`:
-      tasks.forEach(function (element) {
-        if (element.isArchive) {
-          count += 1;
-        }
-      });
-      break;
-    default:
-      break;
-  }
-  return count;
+function getFilterToCount(tasks) {
+  const filterToCount = {};
+  Filters.forEach((el) => {
+    filterToCount[el] = 0;
+  });
+  filterToCount[`all`] = tasks.length;
+  tasks.forEach((element) => {
+    if (element.dueDate !== null && element.dueDate.getTime() > Date.now()) {
+      filterToCount[`overdue`] += 1;
+    }
+    if (isToday(element.dueDate)) {
+      filterToCount[`today`] += 1;
+    }
+    if (element.isFavorite) {
+      filterToCount[`favorite`] += 1;
+    }
+    if (isRepeating(element.repeatingDays)) {
+      filterToCount[`repeating`] += 1;
+    }
+    if (element.tags.size) {
+      filterToCount[`tags`] += 1;
+    }
+    if (element.isArchive) {
+      filterToCount[`archive`] += 1;
+    }
+  })
+  return filterToCount;
 }
 
-function getFilterList() {
-  const filterList = [];
-  FILTER_NAME.forEach(function (element) {
-    const filterObject = {
+function genFilterList(tasks) {
+  const filterToCount = getFilterToCount(tasks);
+  const filterList = Object.keys(filterToCount)
+    .map((element) => ({
       name: element,
-    };
-    filterObject[`count`] = getCount(filterObject.name, taskList);
-    filterList.push(filterObject);
-  });
+      count: filterToCount[element]
+    }))
+
   return filterList;
 }
 
-const filterList = getFilterList();
-
-export {filterList, taskList};
+export {genFilterList};

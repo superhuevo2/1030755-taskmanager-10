@@ -2,7 +2,6 @@ import {DescriptionItems, Tags, Colors} from '../const.js';
 
 
 const ONE_WEEK_IN_MS = 24 * 60 * 60 * 1000 * 7;
-const TASK_COUNT = 8;
 const DefaultRepeatingDays = {
   'mo': false,
   'tu': false,
@@ -71,6 +70,4 @@ function genTaskList(count) {
     .map(genTask);
 }
 
-const taskList = genTaskList(TASK_COUNT);
-
-export {taskList};
+export {genTaskList};
