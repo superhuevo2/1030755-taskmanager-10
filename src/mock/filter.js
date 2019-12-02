@@ -44,7 +44,7 @@ function getFilterToCount(tasks) {
     if (element.isArchive) {
       filterToCount[`archive`] += 1;
     }
-  })
+  });
   return filterToCount;
 }
 
@@ -54,7 +54,7 @@ function genFilterList(tasks) {
     .map((element) => ({
       name: element,
       count: filterToCount[element]
-    }))
+    }));
 
   return filterList;
 }
