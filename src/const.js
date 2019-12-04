@@ -1,13 +1,13 @@
-const DescriptionItems = [
+const DESCRIPTION_ITEMS = [
   `Изучить теорию`,
   `Сделать домашку`,
   `Пройти интенсив на соточку`
 ];
 
-const Tags = [`homework`, `theory`, `practice`, `intensive`, `kek`];
-const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
+const TAGS = [`homework`, `theory`, `practice`, `intensive`, `kek`];
+const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
-const Month = [
+const MONTH = [
   `January`,
   `February`,
   `March`,
@@ -22,6 +22,6 @@ const Month = [
   `December`
 ];
 
-const Filters = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
+const FILTERS = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
 
-export {DescriptionItems, Tags, Colors, Month, Filters};
+export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS};

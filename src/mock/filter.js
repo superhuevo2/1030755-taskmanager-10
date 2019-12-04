@@ -1,4 +1,4 @@
-import {Filters} from '../const.js';
+import {FILTERS} from '../const.js';
 
 function isToday(dateObject) {
   if (dateObject === null) {
@@ -21,7 +21,7 @@ function isRepeating(dayDict) {
 
 function getFilterToCount(tasks) {
   const filterToCount = {};
-  Filters.forEach((el) => {
+  FILTERS.forEach((el) => {
     filterToCount[el] = 0;
   });
   filterToCount[`all`] = tasks.length;

@@ -1,8 +1,8 @@
-import {DescriptionItems, Tags, Colors} from '../const.js';
+import {DESCRIPTION_ITEMS, TAGS, COLORS} from '../const.js';
 
 
-const ONE_WEEK_IN_MS = 24 * 60 * 60 * 1000 * 7;
-const DefaultRepeatingDays = {
+const ONE_WEEK_IN_MS = 604800000;
+const DEFAULT_REPEATING_DAYS = {
   'mo': false,
   'tu': false,
   'we': false,
@@ -35,7 +35,7 @@ function getDate() {
 }
 
 function getRepeatingDays() {
-  return Object.assign({}, DefaultRepeatingDays, {
+  return Object.assign({}, DEFAULT_REPEATING_DAYS, {
     'mo': Math.random() > 0.5
   });
 }
@@ -44,20 +44,20 @@ function getTags() {
   const tagCount = getRandom(0, 4);
   const tagSet = new Set();
   while (tagSet.size < tagCount) {
-    tagSet.add(Tags[getRandom(0, Tags.length)]);
+    tagSet.add(TAGS[getRandom(0, TAGS.length)]);
   }
   return tagSet;
 }
 
 function genTask() {
   const task = {
-    description: DescriptionItems[
-        getRandom(0, DescriptionItems.length)
+    description: DESCRIPTION_ITEMS[
+        getRandom(0, DESCRIPTION_ITEMS.length)
     ],
     dueDate: getDate(),
     repeatingDays: getRepeatingDays(),
     tags: getTags(),
-    color: Colors[getRandom(0, Colors.length)],
+    color: COLORS[getRandom(0, COLORS.length)],
     isFavorite: Math.random() > 0.5,
     isArchive: Math.random() > 0.5
   };

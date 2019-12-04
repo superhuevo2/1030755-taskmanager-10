@@ -1,4 +1,4 @@
-import {Colors, Month} from '../const.js';
+import {COLORS, MONTH} from '../const.js';
 
 function isExpired(date) {
   return date instanceof Date && date < Date.now();
@@ -25,7 +25,7 @@ function createHashtag(tagSet) {
 }
 
 function createDate(date) {
-  return `${date.getDate()} ${Month[date.getMonth()]}`;
+  return `${date.getDate()} ${MONTH[date.getMonth()]}`;
 }
 
 function castTimeFormat(value) {
@@ -154,7 +154,7 @@ function setDeadline(dateObject) {
 function setColor(color) {
   const colorClass = `card--${color}`;
   const colorStatus = {};
-  Colors.forEach(function (el) {
+  COLORS.forEach(function (el) {
     if (el === color) {
       colorStatus[el] = `checked`;
     } else {
