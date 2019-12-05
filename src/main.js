@@ -17,9 +17,32 @@ const render = function (element, container) {
   container.append(element);
 };
 
-const renderCard = function (element, container) {
-  render(element, container);
+const switchCard = function (newElement, oldElement) {
+  const parentElement = oldElement.parentNode;
+  parentElement.replaceChild(newElement, oldElement);
+}
+
+const renderCard = function () {
+  const boardTasks = document.querySelector(`.board__tasks`);
+
+  const cardElement = cardObjects[showedTaskCount].getElement(`card`);
+  cardObjects[showedTaskCount].removeElement();
+  const cardEditElement = cardObjects[showedTaskCount].getElement(`editCard`);
+
+  const editButton = cardElement.querySelector(`.card__btn--edit`);
+  editButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    switchCard(cardEditElement, cardElement);
+  })
+
+  render(cardElement, boardTasks);
   showedTaskCount += 1;
+
+  const editCardForm = cardEditElement.querySelector(`form`);
+  editCardForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    switchCard(cardElement, cardEditElement);
+  })
 };
 
 
@@ -37,7 +60,6 @@ const sorter = new Sorter();
 const sorterElement = sorter.getElement();
 render(sorterElement, main);
 
-const boardTasks = document.querySelector(`.board__tasks`);
 
 const cardObjects = [];
 Array(...Array(taskList.length)).forEach((el, i) => {
@@ -46,13 +68,8 @@ Array(...Array(taskList.length)).forEach((el, i) => {
 });
 
 
-const editCardElement = cardObjects[showedTaskCount].getElement(`editCard`);
-renderCard(editCardElement, boardTasks);
-
-
 while (showedTaskCount < CARD_SHOWING) {
-  const cardElement = cardObjects[showedTaskCount].getElement(`card`);
-  renderCard(cardElement, boardTasks);
+  renderCard();
 }
 
 const boardContainer = document.querySelector(`.board`);
@@ -65,8 +82,7 @@ const loadMoreButton = document.querySelector(`.load-more`);
 loadMoreButton.addEventListener(`click`, function () {
   let counter = 0;
   while (showedTaskCount < taskList.length && counter < CARD_SHOWING) {
-    const cardElement = cardObjects[showedTaskCount].getElement(`card`);
-    renderCard(cardElement, boardTasks);
+    renderCard();
     counter += 1;
   }
   if (showedTaskCount === taskList.length) {
