@@ -1,12 +1,5 @@
-import {COLORS, MONTH} from '../const.js';
-
-function isExpired(date) {
-  return date instanceof Date && date < Date.now();
-}
-
-function isRepeating(days) {
-  return Object.values(days).some(Boolean);
-}
+import {COLORS} from '../const.js';
+import {createElement, isExpired, isRepeating, createDate, createTime} from '../utils.js';
 
 function createHashtag(tagSet) {
   let fragment = ``;
@@ -24,23 +17,68 @@ function createHashtag(tagSet) {
   return fragment;
 }
 
-function createDate(date) {
-  return `${date.getDate()} ${MONTH[date.getMonth()]}`;
+function setRepeat(repeatingDays) {
+  const repeatDict = {
+    repeatClass: null,
+    repeatAttr: null,
+    repeatStatus: null,
+    repeatDays: {}
+  };
+  if (isRepeating(repeatingDays)) {
+    repeatDict.repeatClass = `card--repeat`;
+    repeatDict.repeatAttr = ``;
+    repeatDict.repeatStatus = `yes`;
+    for (let day in repeatingDays) {
+      if (repeatingDays.hasOwnProperty(day)) {
+        repeatDict.repeatDays[day] = repeatingDays[day] ? `checked` : ``;
+      }
+    }
+  } else {
+    repeatDict.repeatClass = ``;
+    repeatDict.repeatAttr = `disabled`;
+    repeatDict.repeatStatus = `no`;
+    for (let day in repeatingDays) {
+      if (repeatingDays.hasOwnProperty(day)) {
+        repeatDict.repeatDays[day] = ``;
+      }
+    }
+  }
+  return repeatDict;
 }
 
-function castTimeFormat(value) {
-  return value < 10 ? `0${value}` : String(value);
+function setDeadline(dateObject) {
+  let deadlineStatus;
+  let deadlineAttr;
+  let value;
+  if (dateObject) {
+    const date = createDate(dateObject);
+    const time = createTime(dateObject);
+    value = `value="${date} ${time}"`;
+    deadlineStatus = `yes`;
+    deadlineAttr = ``;
+  } else {
+    value = ``;
+    deadlineStatus = `no`;
+    deadlineAttr = `disabled`;
+  }
+  return [deadlineStatus, deadlineAttr, value];
 }
 
-function createTime(date) {
-  let hours = castTimeFormat(date.getHours());
-  let minutes = castTimeFormat(date.getMinutes());
-  let interval = date.getHours() > 11 ? `PM` : `AM`;
-
-  return `${hours}:${minutes} ${interval}`;
+function setColor(color) {
+  const colorClass = `card--${color}`;
+  const colorStatus = {};
+  COLORS.forEach(function (el) {
+    if (el === color) {
+      colorStatus[el] = `checked`;
+    } else {
+      colorStatus[el] = ``;
+    }
+  });
+  return [colorClass, colorStatus];
 }
 
-const createCard = function (task) {
+
+function createCardTemplate(task) {
   const {description, tags, dueDate, color, repeatingDays} = task;
 
   const isDateShowing = Boolean(dueDate);
@@ -49,7 +87,6 @@ const createCard = function (task) {
   const hashtag = createHashtag(tags);
   const repeatClass = isRepeating(repeatingDays) ? `card--repeat` : ``;
   const deadlineClass = isExpired(dueDate) ? `card--deadline` : ``;
-
 
   return (
     `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
@@ -102,78 +139,55 @@ const createCard = function (task) {
       </div>
     </article>`
   );
-};
-
-function setRepeat(repeatingDays) {
-  let repeatClass;
-  let repeatAttr;
-  let repeatStatus;
-  let repeatDays;
-  if (isRepeating(repeatingDays)) {
-    repeatClass = `card--repeat`;
-    repeatAttr = ``;
-    repeatStatus = `yes`;
-    repeatDays = {};
-    for (let day in repeatingDays) {
-      if (repeatingDays.hasOwnProperty(day)) {
-        repeatDays[day] = repeatingDays[day] ? `checked` : ``;
-      }
-    }
-  } else {
-    repeatClass = ``;
-    repeatAttr = `disabled`;
-    repeatStatus = `no`;
-    repeatDays = {};
-    for (let day in repeatingDays) {
-      if (repeatingDays.hasOwnProperty(day)) {
-        repeatDays[day] = ``;
-      }
-    }
-  }
-  return [repeatClass, repeatAttr, repeatStatus, repeatDays];
 }
 
-function setDeadline(dateObject) {
-  let deadlineStatus;
-  let deadlineAttr;
-  let value;
-  if (dateObject) {
-    const date = createDate(dateObject);
-    const time = createTime(dateObject);
-    value = `value="${date} ${time}"`;
-    deadlineStatus = `yes`;
-    deadlineAttr = ``;
-  } else {
-    value = ``;
-    deadlineStatus = `no`;
-    deadlineAttr = `disabled`;
-  }
-  return [deadlineStatus, deadlineAttr, value];
-}
-
-function setColor(color) {
-  const colorClass = `card--${color}`;
-  const colorStatus = {};
-  COLORS.forEach(function (el) {
-    if (el === color) {
-      colorStatus[el] = `checked`;
-    } else {
-      colorStatus[el] = ``;
-    }
-  });
-  return [colorClass, colorStatus];
-}
-
-const createEditCard = function (task) {
+function createCardEditTemplate(task) {
   const {description, tags, dueDate, color, repeatingDays} = task;
-  const [repeatClass, repeatAttr, repeatStatus, repeatDays] = setRepeat(repeatingDays);
+  const repeatDict = setRepeat(repeatingDays);
   const [deadlineStatus, deadlineAttr, deadlineValue] = setDeadline(dueDate);
   const [colorClass, colorStatus] = setColor(color);
   const hashtag = createHashtag(tags);
 
+  let repeatFragment = ``;
+  Object.keys(repeatDict.repeatDays).forEach((element) => {
+    const repeatTemplate = (
+      `<input
+        class="visually-hidden card__repeat-day-input"
+        type="checkbox"
+        id="repeat-${element}-1"
+        name="repeat"
+        value="${element}"
+        ${repeatDict.repeatDays[element]}
+      />
+      <label class="card__repeat-day" for="repeat-${element}-1"
+        >${element}</label
+      >`
+    );
+    repeatFragment += repeatTemplate;
+  });
+
+  let colorsFragment = ``;
+  Object.keys(colorStatus).forEach((element) => {
+    const colorTemplate = (
+      `<input
+        type="radio"
+        id="color-${element}-1"
+        class="card__color-input card__color-input--${element} visually-hidden"
+        name="color"
+        value="${element}"
+        ${colorStatus.element}
+      />
+      <label
+        for="color-${element}-1"
+        class="card__color card__color--${element}"
+        >${element}</label
+      >`
+    );
+    colorsFragment += colorTemplate;
+  });
 
   return (
-    `<article class="card card--edit ${colorClass} ${repeatClass}">
+    `<article class="card card--edit ${colorClass} ${repeatDict.repeatClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -212,88 +226,12 @@ const createEditCard = function (task) {
                 </fieldset>
 
                 <button class="card__repeat-toggle" type="button">
-                  repeat:<span class="card__repeat-status">${repeatStatus}</span>
+                  repeat:<span class="card__repeat-status">${repeatDict.repeatStatus}</span>
                 </button>
 
-                <fieldset class="card__repeat-days" ${repeatAttr}>
+                <fieldset class="card__repeat-days" ${repeatDict.repeatAttr}>
                   <div class="card__repeat-days-inner">
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-mo-1"
-                      name="repeat"
-                      value="mo"
-                      ${repeatDays[`mo`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-mo-1"
-                      >mo</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-tu-1"
-                      name="repeat"
-                      value="tu"
-                      ${repeatDays[`tu`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-tu-1"
-                      >tu</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-we-1"
-                      name="repeat"
-                      value="we"
-                      ${repeatDays[`we`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-we-1"
-                      >we</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-th-1"
-                      name="repeat"
-                      value="th"
-                      ${repeatDays[`th`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-th-1"
-                      >th</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-fr-1"
-                      name="repeat"
-                      value="fr"
-                      ${repeatDays[`fr`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-fr-1"
-                      >fr</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      name="repeat"
-                      value="sa"
-                      id="repeat-sa-1"
-                      ${repeatDays[`sa`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-sa-1"
-                      >sa</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-su-1"
-                      name="repeat"
-                      value="su"
-                      ${repeatDays[`su`]}
-                    />
-                    <label class="card__repeat-day" for="repeat-su-1"
-                      >su</label
-                    >
+                    ${repeatFragment}
                   </div>
                 </fieldset>
               </div>
@@ -317,71 +255,7 @@ const createEditCard = function (task) {
             <div class="card__colors-inner">
               <h3 class="card__colors-title">Color</h3>
               <div class="card__colors-wrap">
-                <input
-                  type="radio"
-                  id="color-black-1"
-                  class="card__color-input card__color-input--black visually-hidden"
-                  name="color"
-                  value="black"
-                  ${colorStatus[`black`]}
-                />
-                <label
-                  for="color-black-1"
-                  class="card__color card__color--black"
-                  >black</label
-                >
-                <input
-                  type="radio"
-                  id="color-yellow-1"
-                  class="card__color-input card__color-input--yellow visually-hidden"
-                  name="color"
-                  value="yellow"
-                  ${colorStatus[`yellow`]}
-                />
-                <label
-                  for="color-yellow-1"
-                  class="card__color card__color--yellow"
-                  >yellow</label
-                >
-                <input
-                  type="radio"
-                  id="color-blue-1"
-                  class="card__color-input card__color-input--blue visually-hidden"
-                  name="color"
-                  value="blue"
-                  ${colorStatus[`blue`]}
-                />
-                <label
-                  for="color-blue-1"
-                  class="card__color card__color--blue"
-                  >blue</label
-                >
-                <input
-                  type="radio"
-                  id="color-green-1"
-                  class="card__color-input card__color-input--green visually-hidden"
-                  name="color"
-                  value="green"
-                  ${colorStatus[`green`]}
-                />
-                <label
-                  for="color-green-1"
-                  class="card__color card__color--green"
-                  >green</label
-                >
-                <input
-                  type="radio"
-                  id="color-pink-1"
-                  class="card__color-input card__color-input--pink visually-hidden"
-                  name="color"
-                  value="pink"
-                  ${colorStatus[`pink`]}
-                />
-                <label
-                  for="color-pink-1"
-                  class="card__color card__color--pink"
-                  >pink</label
-                >
+                ${colorsFragment}
               </div>
             </div>
           </div>
@@ -394,6 +268,45 @@ const createEditCard = function (task) {
       </form>
     </article>`
   );
-};
+}
 
-export {createCard, createEditCard};
+
+class Card {
+  constructor(task) {
+    this.task = task;
+    this._element = null;
+  }
+
+  getCardTemplate(task) {
+    return createCardTemplate(task);
+  }
+
+  getEditCardTemplate(task) {
+    return createCardEditTemplate(task);
+  }
+
+  getElement(type) {
+    if (!this._element) {
+      let template;
+      switch (type) {
+        case `card`:
+          template = this.getCardTemplate(this.task);
+          break;
+        case `editCard`:
+          template = this.getEditCardTemplate(this.task);
+          break;
+        default:
+          throw new Error(`Invalid command`);
+      }
+      this._element = createElement(template);
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+
+export default Card;
