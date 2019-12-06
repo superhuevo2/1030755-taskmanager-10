@@ -62,8 +62,8 @@ render(sorterElement, main);
 
 
 const cardObjects = [];
-Array(...Array(taskList.length)).forEach((el, i) => {
-  const card = new Card(taskList[i]);
+taskList.forEach((el) => {
+  const card = new Card(el);
   cardObjects.push(card);
 });
 
