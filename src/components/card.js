@@ -175,7 +175,7 @@ const createCardEditTemplate = function (task) {
         class="card__color-input card__color-input--${element} visually-hidden"
         name="color"
         value="${element}"
-        ${colorStatus.element}
+        ${colorStatus[element]}
       />
       <label
         for="color-${element}-1"
