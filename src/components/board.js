@@ -1,31 +1,47 @@
-import {createElement} from '../utils.js';
+import {createElement, isActiveTask} from '../utils.js';
 
-const createSorterTemplate = function () {
+const createBorderTemplate = function () {
   return (
     `<section class="board container">
-    <div class="board__filter-list">
-      <a href="#" class="board__filter">SORT BY DEFAULT</a>
-      <a href="#" class="board__filter">SORT BY DATE up</a>
-      <a href="#" class="board__filter">SORT BY DATE down</a>
-    </div>
-    <div class="board__tasks"></div>
-  </section>`
+      <div class="board__tasks"></div>
+    </section>`
+  );
+};
+
+const createNoTasksTemplate = function () {
+  return (
+    `<p class="board__no-tasks">
+      Click «ADD NEW TASK» in menu to create your first task
+    </p>`
   );
 };
 
 
-class Sorter {
+class Board {
   constructor() {
     this._element = null;
   }
 
-  getTemplate() {
-    return createSorterTemplate();
+  getBorderTemplate() {
+    return createBorderTemplate();
   }
 
-  getElement() {
+  getNoTasksTemplate() {
+    return createNoTasksTemplate();
+  }
+
+  getTasksContainerTemplate() {
+    return createBorderTemplate();
+  }
+
+  getElement(taskList) {
     if (!this._element) {
-      const template = this.getTemplate();
+      let template;
+      if (isActiveTask(taskList)) {
+        template = this.getTasksContainerTemplate();
+      } else {
+        template = this.getNoTasksTemplate();
+      }
       this._element = createElement(template);
     }
     return this._element;
@@ -36,4 +52,4 @@ class Sorter {
   }
 }
 
-export default Sorter;
+export default Board;
