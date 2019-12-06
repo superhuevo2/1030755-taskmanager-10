@@ -1,6 +1,6 @@
 import {createElement} from '../utils.js';
 
-function createFilterTemplate(filters) {
+const createFilterTemplate = function (filters) {
   let filtersTemplate = ``;
   filters.forEach((filter) => {
     const filterTemplate = (

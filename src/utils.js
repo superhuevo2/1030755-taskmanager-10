@@ -1,28 +1,28 @@
 import {MONTH} from './const.js';
 
-function createElement(template) {
+const createElement = function (template) {
   const element = document.createElement(`div`);
   element.innerHTML = template;
   return element;
 }
 
-function isExpired(date) {
+const isExpired = function (date) {
   return date instanceof Date && date < Date.now();
 }
 
-function isRepeating(days) {
+const isRepeating = function (days) {
   return Object.values(days).some(Boolean);
 }
 
-function createDate(date) {
+const createDate = function (date) {
   return `${date.getDate()} ${MONTH[date.getMonth()]}`;
 }
 
-function castTimeFormat(value) {
+const castTimeFormat = function (value) {
   return value < 10 ? `0${value}` : String(value);
 }
 
-function createTime(date) {
+const createTime = function (date) {
   let hours = castTimeFormat(date.getHours());
   let minutes = castTimeFormat(date.getMinutes());
   let interval = date.getHours() > 11 ? `PM` : `AM`;

@@ -1,6 +1,6 @@
 import {createElement} from '../utils.js';
 
-function createSorterTemplate() {
+const createSorterTemplate = function () {
   return (
     `<section class="board container">
     <div class="board__filter-list">

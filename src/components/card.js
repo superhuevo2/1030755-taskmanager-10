@@ -1,7 +1,7 @@
 import {COLORS} from '../const.js';
 import {createElement, isExpired, isRepeating, createDate, createTime} from '../utils.js';
 
-function createHashtag(tagSet) {
+const createHashtag = function (tagSet) {
   let fragment = ``;
   tagSet.forEach((element) => {
     const template = (
@@ -17,7 +17,7 @@ function createHashtag(tagSet) {
   return fragment;
 }
 
-function setRepeat(repeatingDays) {
+const setRepeat = function (repeatingDays) {
   const repeatDict = {
     repeatClass: null,
     repeatAttr: null,
@@ -46,7 +46,7 @@ function setRepeat(repeatingDays) {
   return repeatDict;
 }
 
-function setDeadline(dateObject) {
+const setDeadline = function (dateObject) {
   let deadlineStatus;
   let deadlineAttr;
   let value;
@@ -64,7 +64,7 @@ function setDeadline(dateObject) {
   return [deadlineStatus, deadlineAttr, value];
 }
 
-function setColor(color) {
+const setColor = function (color) {
   const colorClass = `card--${color}`;
   const colorStatus = {};
   COLORS.forEach(function (el) {
@@ -78,7 +78,7 @@ function setColor(color) {
 }
 
 
-function createCardTemplate(task) {
+const createCardTemplate = function (task) {
   const {description, tags, dueDate, color, repeatingDays} = task;
 
   const isDateShowing = Boolean(dueDate);
@@ -141,7 +141,7 @@ function createCardTemplate(task) {
   );
 }
 
-function createCardEditTemplate(task) {
+const createCardEditTemplate = function (task) {
   const {description, tags, dueDate, color, repeatingDays} = task;
   const repeatDict = setRepeat(repeatingDays);
   const [deadlineStatus, deadlineAttr, deadlineValue] = setDeadline(dueDate);

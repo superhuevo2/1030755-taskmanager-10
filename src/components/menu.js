@@ -1,7 +1,7 @@
 import {createElement} from '../utils.js';
 
 
-function createMenuTemplate() {
+const createMenuTemplate = function () {
   return (
     `<section class="control__btn-wrap">
       <input
