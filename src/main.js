@@ -20,7 +20,7 @@ const render = function (element, container) {
 const switchCard = function (newElement, oldElement) {
   const parentElement = oldElement.parentNode;
   parentElement.replaceChild(newElement, oldElement);
-}
+};
 
 const renderCard = function () {
   const boardTasks = document.querySelector(`.board__tasks`);
@@ -30,19 +30,19 @@ const renderCard = function () {
   const cardEditElement = cardObjects[showedTaskCount].getElement(`editCard`);
 
   const editButton = cardElement.querySelector(`.card__btn--edit`);
-  editButton.addEventListener('click', function (evt) {
+  editButton.addEventListener(`click`, function (evt) {
     evt.preventDefault();
     switchCard(cardEditElement, cardElement);
-  })
+  });
 
   render(cardElement, boardTasks);
   showedTaskCount += 1;
 
   const editCardForm = cardEditElement.querySelector(`form`);
-  editCardForm.addEventListener('submit', function (evt) {
+  editCardForm.addEventListener(`submit`, function (evt) {
     evt.preventDefault();
     switchCard(cardElement, cardEditElement);
-  })
+  });
 };
 
 

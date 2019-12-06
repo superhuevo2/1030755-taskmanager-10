@@ -32,7 +32,7 @@ const createMenuTemplate = function () {
       >
     </section>`
   );
-}
+};
 
 
 class Menu {

@@ -22,7 +22,7 @@ const createFilterTemplate = function (filters) {
       ${filtersTemplate}
       </section>`
   );
-}
+};
 
 class Filter {
   constructor(filterList) {

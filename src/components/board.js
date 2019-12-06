@@ -11,7 +11,7 @@ const createSorterTemplate = function () {
     <div class="board__tasks"></div>
   </section>`
   );
-}
+};
 
 
 class Sorter {

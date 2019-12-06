@@ -15,7 +15,7 @@ const createHashtag = function (tagSet) {
     fragment += template;
   });
   return fragment;
-}
+};
 
 const setRepeat = function (repeatingDays) {
   const repeatDict = {
@@ -44,7 +44,7 @@ const setRepeat = function (repeatingDays) {
     }
   }
   return repeatDict;
-}
+};
 
 const setDeadline = function (dateObject) {
   let deadlineStatus;
@@ -62,7 +62,7 @@ const setDeadline = function (dateObject) {
     deadlineAttr = `disabled`;
   }
   return [deadlineStatus, deadlineAttr, value];
-}
+};
 
 const setColor = function (color) {
   const colorClass = `card--${color}`;
@@ -75,7 +75,7 @@ const setColor = function (color) {
     }
   });
   return [colorClass, colorStatus];
-}
+};
 
 
 const createCardTemplate = function (task) {
@@ -139,7 +139,7 @@ const createCardTemplate = function (task) {
       </div>
     </article>`
   );
-}
+};
 
 const createCardEditTemplate = function (task) {
   const {description, tags, dueDate, color, repeatingDays} = task;
@@ -268,7 +268,7 @@ const createCardEditTemplate = function (task) {
       </form>
     </article>`
   );
-}
+};
 
 
 class Card {
