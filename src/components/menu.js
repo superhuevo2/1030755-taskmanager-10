@@ -1,4 +1,7 @@
-const createMenu = function () {
+import {createElement} from '../utils.js';
+
+
+const createMenuTemplate = function () {
   return (
     `<section class="control__btn-wrap">
       <input
@@ -31,4 +34,27 @@ const createMenu = function () {
   );
 };
 
-export {createMenu};
+
+class Menu {
+  constructor() {
+    this._element = null;
+  }
+  getTemplate() {
+    return createMenuTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      const template = this.getTemplate();
+      this._element = createElement(template);
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+
+export default Menu;
