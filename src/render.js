@@ -18,18 +18,15 @@ const switchCard = function (newElement, oldElement) {
 };
 
 
-const renderCard = function (cardObjects, container, counter) {
-  const cardElement = cardObjects[counter].getElement(`card`);
-  cardObjects[counter].removeElement();
-  const cardEditElement = cardObjects[counter].getElement(`editCard`);
-
-  function escDownHandler(evt) {
+const renderCard = function (cardElement, cardEditElement, container) {
+  const escDownHandler = function (evt) {
     if (evt.keyCode == KEY_CODE_ESC) {
       evt.preventDefault();
       switchCard(cardElement, cardEditElement);
       document.removeEventListener(`keydown`, escDownHandler)
     }
-  }
+  };
+
   const editButton = cardElement.querySelector(`.card__btn--edit`);
   editButton.addEventListener(`click`, function (evt) {
     evt.preventDefault();
@@ -38,9 +35,6 @@ const renderCard = function (cardObjects, container, counter) {
     document.addEventListener(`keydown`, escDownHandler);
   });
 
-
-  render(cardElement, container);
-
   const editCardForm = cardEditElement.querySelector(`form`);
   editCardForm.addEventListener(`submit`, function (evt) {
     evt.preventDefault();
@@ -48,6 +42,8 @@ const renderCard = function (cardObjects, container, counter) {
 
     document.removeEventListener(`keydown`, escDownHandler)
   });
+
+  render(cardElement, container);
 };
 
 export {render, renderCard};

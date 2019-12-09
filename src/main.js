@@ -22,14 +22,17 @@ const menu = new Menu();
 const menuElement = menu.getElement();
 render(menuElement, menuContainer);
 
+
 const main = document.querySelector(`.main`);
 const filter = new Filter(filterList);
 const filterElement = filter.getElement();
 render(filterElement, main);
 
+
 const board = new Board();
 const boardElement= board.getElement(taskList);
 render(boardElement, main);
+
 
 const boardContainer = document.querySelector(`.board`);
 const sorter = new Sorter();
@@ -37,30 +40,33 @@ const sorterElement = sorter.getElement();
 render(sorterElement, boardContainer, RenderPosition.AFTERBEGIN);
 
 
-const cardObjects = [];
-taskList.forEach((el) => {
-  const card = new Card(el);
-  cardObjects.push(card);
-});
-
-
 const boardTasks = document.querySelector(`.board__tasks`);
 if (isActiveTask(taskList)) {
   while (showedTaskCount < CARD_SHOWING) {
-    renderCard(cardObjects, boardTasks, showedTaskCount);
+    const card = new Card(taskList[showedTaskCount]);
+    const cardElement = card.getElement(`card`);
+    card.removeElement();
+    const cardEditElement = card.getElement(`editCard`);
+
+    renderCard(cardElement, cardEditElement, boardTasks);
     showedTaskCount++;
   }
+
 
   const loadMoreButtonObj = new LoadMoreButton();
   const loadMoreButtonElement = loadMoreButtonObj.getElement();
   render(loadMoreButtonElement, boardContainer);
 
   const loadMoreButton = document.querySelector(`.load-more`);
-
   loadMoreButton.addEventListener(`click`, function () {
     let counter = 0;
     while (showedTaskCount < taskList.length && counter < CARD_SHOWING) {
-      renderCard(cardObjects, boardTasks, showedTaskCount);
+      const card = new Card(taskList[showedTaskCount]);
+      const cardElement = card.getElement(`card`);
+      card.removeElement();
+      const cardEditElement = card.getElement(`editCard`);
+
+      renderCard(cardElement, cardEditElement, boardTasks);
       showedTaskCount++
       counter++;
     }
