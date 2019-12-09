@@ -3,7 +3,7 @@ import {MONTH} from './const.js';
 const createElement = function (template) {
   const element = document.createElement(`div`);
   element.innerHTML = template;
-  return element;
+  return element.firstChild;
 };
 
 const isExpired = function (date) {
