@@ -1,49 +1,65 @@
 import {RenderPosition, KEY_CODE_ESC} from './const.js';
 
-const render = function (element, container, place = RenderPosition.BEFOREEND) {
+
+const render = function (component, container, place = RenderPosition.BEFOREEND) {
+  const element = component.getElement();
+  const containerElement = container.getElement ? container.getElement() : container;
+
   switch (place) {
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      containerElement.append(element);
       break;
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      containerElement.prepend(element);
+      break;
     default:
       break;
   }
 };
 
-const switchCard = function (newElement, oldElement) {
+
+const replaceCard = function (newComponent, oldComponent) {
+  const newElement = newComponent.getElement();
+  const oldElement = oldComponent.getElement();
   const parentElement = oldElement.parentNode;
   parentElement.replaceChild(newElement, oldElement);
 };
 
-
-const renderCard = function (cardElement, cardEditElement, container) {
+const renderCard = function (cardComponent, cardEditComponent, container) {
   const escDownHandler = function (evt) {
-    if (evt.keyCode == KEY_CODE_ESC) {
+    if (evt.keyCode === KEY_CODE_ESC) {
       evt.preventDefault();
-      switchCard(cardElement, cardEditElement);
+      replaceCard(cardComponent, cardEditComponent);
       document.removeEventListener(`keydown`, escDownHandler)
     }
   };
-
-  const editButton = cardElement.querySelector(`.card__btn--edit`);
-  editButton.addEventListener(`click`, function (evt) {
+  const editHandler = function (evt, cardEditComponent, cardComponent) {
     evt.preventDefault();
-    switchCard(cardEditElement, cardElement);
+    replaceCard(cardEditComponent, cardComponent);
 
     document.addEventListener(`keydown`, escDownHandler);
-  });
-
-  const editCardForm = cardEditElement.querySelector(`form`);
-  editCardForm.addEventListener(`submit`, function (evt) {
+  };
+  const submitHandler = function (evt, cardComponent, cardEditComponent) {
     evt.preventDefault();
-    switchCard(cardElement, cardEditElement);
+    replaceCard(cardComponent, cardEditComponent);
 
-    document.removeEventListener(`keydown`, escDownHandler)
+    document.removeEventListener(`keydown`, escDownHandler);
+  };
+
+  cardComponent.setEditHandler(function (evt) {
+    editHandler(evt, cardEditComponent, cardComponent)
+  });
+  cardEditComponent.setSubmitHandler(function (evt) {
+    submitHandler(evt, cardComponent, cardEditComponent)
   });
 
-  render(cardElement, container);
+  render(cardComponent, container);
 };
 
-export {render, renderCard};
+
+const removeComponent = function(component) {
+  component.getElement().remove();
+  component.removeElement();
+}
+
+export {render, renderCard, removeComponent, replaceCard};

@@ -88,6 +88,11 @@ class Card extends AbstractComponent {
     this._task = task;
   }
 
+  setEditHandler(handler) {
+    const editButton = this.getElement().querySelector(`.card__btn--edit`);
+    editButton.addEventListener(`click`, handler);
+  }
+
   getTemplate() {
     return createCardTemplate(this._task);
   }

@@ -214,6 +214,11 @@ class CardEdit extends AbstractComponent {
     this._task = task;
   }
 
+  setSubmitHandler(handler) {
+    const editCardForm = this.getElement().querySelector(`form`);
+    editCardForm.addEventListener(`submit`, handler);
+  }
+
   getTemplate() {
     return createCardEditTemplate(this._task);
   }

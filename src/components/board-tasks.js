@@ -9,7 +9,7 @@ const createBoardTasksTemplate = function () {
 
 class BoardTasks extends AbstractComponent {
   getTemplate() {
-    return createBoardTasksTemplate()
+    return createBoardTasksTemplate();
   }
 }
 

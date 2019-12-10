@@ -6,7 +6,11 @@ const createLoadMoreButtonTemplate = function () {
   );
 };
 
-class LoadMoreButton  extends AbstractComponent {
+class LoadMoreButton extends AbstractComponent {
+
+  setClickHandler(handler) {
+    this.getElement().addEventListener(`click`, handler);
+  }
 
   getTemplate() {
     return createLoadMoreButtonTemplate();
