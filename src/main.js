@@ -9,6 +9,9 @@ import Sorter from './components/sorter.js';
 import Card from './components/card.js';
 import LoadMoreButton from './components/button.js';
 import Board from './components/board.js';
+import NoTask from './components/no-task.js';
+import BoardTasks from './components/board-tasks.js';
+import CardEdit from './components/cardEdit.js';
 
 const CARD_SHOWING = 8;
 const TASK_COUNT = 22;
@@ -30,7 +33,7 @@ render(filterElement, main);
 
 
 const board = new Board();
-const boardElement= board.getElement(taskList);
+const boardElement= board.getElement();
 render(boardElement, main);
 
 
@@ -39,16 +42,22 @@ const sorter = new Sorter();
 const sorterElement = sorter.getElement();
 render(sorterElement, boardContainer, RenderPosition.AFTERBEGIN);
 
+if (!isActiveTask(taskList)) {
+  const noTask = new NoTask();
+  const noTaskElement = noTask.getElement();
+  render(noTaskElement, boardContainer)
+} else {
+  const boardTasks = new BoardTasks();
+  const boardTasksElement = boardTasks.getElement();
+  render(boardTasksElement, boardContainer);
 
-const boardTasks = document.querySelector(`.board__tasks`);
-if (isActiveTask(taskList)) {
   while (showedTaskCount < CARD_SHOWING) {
     const card = new Card(taskList[showedTaskCount]);
-    const cardElement = card.getElement(`card`);
-    card.removeElement();
-    const cardEditElement = card.getElement(`editCard`);
+    const cardElement = card.getElement();
+    const cardEdit = new CardEdit(taskList[showedTaskCount]);
+    const cardEditElement = cardEdit.getElement();
 
-    renderCard(cardElement, cardEditElement, boardTasks);
+    renderCard(cardElement, cardEditElement, boardTasksElement);
     showedTaskCount++;
   }
 
@@ -62,11 +71,11 @@ if (isActiveTask(taskList)) {
     let counter = 0;
     while (showedTaskCount < taskList.length && counter < CARD_SHOWING) {
       const card = new Card(taskList[showedTaskCount]);
-      const cardElement = card.getElement(`card`);
-      card.removeElement();
-      const cardEditElement = card.getElement(`editCard`);
+      const cardElement = card.getElement();
+      const cardEdit = new CardEdit(taskList[showedTaskCount]);
+      const cardEditElement = cardEdit.getElement();
 
-      renderCard(cardElement, cardEditElement, boardTasks);
+      renderCard(cardElement, cardEditElement, boardTasksElement);
       showedTaskCount++
       counter++;
     }
@@ -74,5 +83,5 @@ if (isActiveTask(taskList)) {
       loadMoreButton.remove();
     }
   });
-
 }
+
