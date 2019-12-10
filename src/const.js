@@ -24,4 +24,11 @@ const MONTH = [
 
 const FILTERS = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
 
-export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS};
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+const KEY_CODE_ESC = 27;
+
+export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS, RenderPosition, KEY_CODE_ESC};
