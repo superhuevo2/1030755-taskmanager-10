@@ -7,7 +7,7 @@ import Board from './components/board.js';
 import BoardController from './boardController.js';
 
 
-const TASK_COUNT = 2;
+const TASK_COUNT = 25;
 const taskList = genTaskList(TASK_COUNT);
 const filterList = genFilterList(taskList);
 

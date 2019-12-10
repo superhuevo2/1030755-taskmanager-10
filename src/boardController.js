@@ -85,8 +85,10 @@ class BoardController {
       }
     }
 
-    render(this._loadMoreButton, this._container);
-    this._loadMoreButton.setClickHandler(loadMoreClickHandler);
+    if (this._showedTaskCount < tasks.length) {
+      render(this._loadMoreButton, this._container);
+      this._loadMoreButton.setClickHandler(loadMoreClickHandler);
+    }
   }
 }
 
