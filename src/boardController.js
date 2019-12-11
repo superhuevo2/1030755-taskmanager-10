@@ -14,27 +14,27 @@ const renderCard = function (cardComponent, cardEditComponent, container) {
     if (evt.keyCode === KEY_CODE_ESC) {
       evt.preventDefault();
       replaceCard(cardComponent, cardEditComponent);
-      document.removeEventListener(`keydown`, escDownHandler)
+      document.removeEventListener(`keydown`, escDownHandler);
     }
   };
-  const editHandler = function (evt, cardEditComponent, cardComponent) {
+  const editHandler = function (evt, cardEdit, card) {
     evt.preventDefault();
-    replaceCard(cardEditComponent, cardComponent);
+    replaceCard(cardEdit, card);
 
     document.addEventListener(`keydown`, escDownHandler);
   };
-  const submitHandler = function (evt, cardComponent, cardEditComponent) {
+  const submitHandler = function (evt, card, cardEdit) {
     evt.preventDefault();
-    replaceCard(cardComponent, cardEditComponent);
+    replaceCard(card, cardEdit);
 
     document.removeEventListener(`keydown`, escDownHandler);
   };
 
   cardComponent.setEditHandler(function (evt) {
-    editHandler(evt, cardEditComponent, cardComponent)
+    editHandler(evt, cardEditComponent, cardComponent);
   });
   cardEditComponent.setSubmitHandler(function (evt) {
-    submitHandler(evt, cardComponent, cardEditComponent)
+    submitHandler(evt, cardComponent, cardEditComponent);
   });
 
   render(cardComponent, container);
@@ -83,7 +83,7 @@ class BoardController {
       if (this._showedTaskCount === tasks.length) {
         removeComponent(this._loadMoreButton);
       }
-    }
+    };
 
     if (this._showedTaskCount < tasks.length) {
       render(this._loadMoreButton, this._container);

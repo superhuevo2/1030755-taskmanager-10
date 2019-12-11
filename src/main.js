@@ -12,7 +12,6 @@ const taskList = genTaskList(TASK_COUNT);
 const filterList = genFilterList(taskList);
 
 
-
 const menuContainer = document.querySelector(`.main__control`);
 const menu = new Menu();
 render(menu, menuContainer);
