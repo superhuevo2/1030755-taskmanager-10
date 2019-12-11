@@ -69,11 +69,7 @@ const setColor = function (color) {
   const colorClass = `card--${color}`;
   const colorStatus = {};
   COLORS.forEach(function (el) {
-    if (el === color) {
-      colorStatus[el] = `checked`;
-    } else {
-      colorStatus[el] = ``;
-    }
+    colorStatus[el] = (el === color) ? `checked` : ``;
   });
   return [colorClass, colorStatus];
 };
