@@ -1,4 +1,4 @@
-import {RenderPosition} from './const.js';
+import {RenderPosition, KEY_CODE_ESC} from './const.js';
 
 const render = function (component, container, place = RenderPosition.BEFOREEND) {
   const element = component.getElement();
@@ -17,6 +17,38 @@ const render = function (component, container, place = RenderPosition.BEFOREEND)
 };
 
 
+const renderCard = function (cardComponent, cardEditComponent, container) {
+  const escDownHandler = function (evt) {
+    if (evt.keyCode === KEY_CODE_ESC) {
+      evt.preventDefault();
+      replaceCard(cardComponent, cardEditComponent);
+      document.removeEventListener(`keydown`, escDownHandler);
+    }
+  };
+  const editHandler = function (evt, cardEdit, card) {
+    evt.preventDefault();
+    replaceCard(cardEdit, card);
+
+    document.addEventListener(`keydown`, escDownHandler);
+  };
+  const submitHandler = function (evt, card, cardEdit) {
+    evt.preventDefault();
+    replaceCard(card, cardEdit);
+
+    document.removeEventListener(`keydown`, escDownHandler);
+  };
+
+  cardComponent.setEditHandler(function (evt) {
+    editHandler(evt, cardEditComponent, cardComponent);
+  });
+  cardEditComponent.setSubmitHandler(function (evt) {
+    submitHandler(evt, cardComponent, cardEditComponent);
+  });
+
+  render(cardComponent, container);
+};
+
+
 const replaceCard = function (newComponent, oldComponent) {
   const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
@@ -30,4 +62,4 @@ const removeComponent = function (component) {
   component.removeElement();
 };
 
-export {render, removeComponent, replaceCard};
+export {render, renderCard, removeComponent, replaceCard};
