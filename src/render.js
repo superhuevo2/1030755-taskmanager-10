@@ -21,19 +21,19 @@ const renderCard = function (cardComponent, cardEditComponent, container) {
   const escDownHandler = function (evt) {
     if (evt.keyCode === KEY_CODE_ESC) {
       evt.preventDefault();
-      replaceCard(cardComponent, cardEditComponent);
+      replaceComponent(cardComponent, cardEditComponent);
       document.removeEventListener(`keydown`, escDownHandler);
     }
   };
   const editHandler = function (evt, cardEdit, card) {
     evt.preventDefault();
-    replaceCard(cardEdit, card);
+    replaceComponent(cardEdit, card);
 
     document.addEventListener(`keydown`, escDownHandler);
   };
   const submitHandler = function (evt, card, cardEdit) {
     evt.preventDefault();
-    replaceCard(card, cardEdit);
+    replaceComponent(card, cardEdit);
 
     document.removeEventListener(`keydown`, escDownHandler);
   };
@@ -49,7 +49,7 @@ const renderCard = function (cardComponent, cardEditComponent, container) {
 };
 
 
-const replaceCard = function (newComponent, oldComponent) {
+const replaceComponent = function (newComponent, oldComponent) {
   const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
   const parentElement = oldElement.parentNode;
@@ -62,4 +62,4 @@ const removeComponent = function (component) {
   component.removeElement();
 };
 
-export {render, renderCard, removeComponent, replaceCard};
+export {render, renderCard, removeComponent};
