@@ -30,5 +30,6 @@ const RenderPosition = {
 };
 
 const KEY_CODE_ESC = 27;
+const CARD_SHOWING = 8;
 
-export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS, RenderPosition, KEY_CODE_ESC};
+export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS, RenderPosition, KEY_CODE_ESC, CARD_SHOWING};

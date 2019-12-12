@@ -30,9 +30,9 @@ const createTime = function (date) {
   return `${hours}:${minutes} ${interval}`;
 };
 
-const isActiveTask = function (taskList) {
- return taskList.reduce((a, b) => a || b.isArchive, false);
-}
+const isNotActive = function (taskList) {
+  return taskList.reduce((a, b) => a && b.isArchive, true);
+};
 
 
-export {createElement, isExpired, isRepeating, createDate, createTime, isActiveTask};
+export {createElement, isExpired, isRepeating, createDate, createTime, isNotActive};

@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstractComponent.js';
 
 const createFilterTemplate = function (filters) {
   let filtersTemplate = ``;
@@ -24,28 +24,19 @@ const createFilterTemplate = function (filters) {
   );
 };
 
-class Filter {
+class Filter extends AbstractComponent {
   constructor(filterList) {
-    this.filterList = filterList;
-    this._element = null;
+    super();
+    this._filterList = filterList;
   }
 
-  getTemplate(filters) {
-    return createFilterTemplate(filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      const template = this.getTemplate(this.filterList);
-      this._element = createElement(template);
-    }
-    return this._element;
+  getTemplate() {
+    return createFilterTemplate(this._filterList);
   }
 
   removeElement() {
     this._element = null;
   }
-
 }
 
 

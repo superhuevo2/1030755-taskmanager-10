@@ -1,49 +1,65 @@
 import {RenderPosition, KEY_CODE_ESC} from './const.js';
 
-const render = function (element, container, place = RenderPosition.BEFOREEND) {
+const render = function (component, container, place = RenderPosition.BEFOREEND) {
+  const element = component.getElement();
+  const containerElement = container.getElement ? container.getElement() : container;
+
   switch (place) {
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      containerElement.append(element);
       break;
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      containerElement.prepend(element);
+      break;
     default:
       break;
   }
 };
 
-const switchCard = function (newElement, oldElement) {
+
+const renderCard = function (cardComponent, cardEditComponent, container) {
+  const escDownHandler = function (evt) {
+    if (evt.keyCode === KEY_CODE_ESC) {
+      evt.preventDefault();
+      replaceCard(cardComponent, cardEditComponent);
+      document.removeEventListener(`keydown`, escDownHandler);
+    }
+  };
+  const editHandler = function (evt, cardEdit, card) {
+    evt.preventDefault();
+    replaceCard(cardEdit, card);
+
+    document.addEventListener(`keydown`, escDownHandler);
+  };
+  const submitHandler = function (evt, card, cardEdit) {
+    evt.preventDefault();
+    replaceCard(card, cardEdit);
+
+    document.removeEventListener(`keydown`, escDownHandler);
+  };
+
+  cardComponent.setEditHandler(function (evt) {
+    editHandler(evt, cardEditComponent, cardComponent);
+  });
+  cardEditComponent.setSubmitHandler(function (evt) {
+    submitHandler(evt, cardComponent, cardEditComponent);
+  });
+
+  render(cardComponent, container);
+};
+
+
+const replaceCard = function (newComponent, oldComponent) {
+  const newElement = newComponent.getElement();
+  const oldElement = oldComponent.getElement();
   const parentElement = oldElement.parentNode;
   parentElement.replaceChild(newElement, oldElement);
 };
 
 
-const renderCard = function (cardElement, cardEditElement, container) {
-  const escDownHandler = function (evt) {
-    if (evt.keyCode == KEY_CODE_ESC) {
-      evt.preventDefault();
-      switchCard(cardElement, cardEditElement);
-      document.removeEventListener(`keydown`, escDownHandler)
-    }
-  };
-
-  const editButton = cardElement.querySelector(`.card__btn--edit`);
-  editButton.addEventListener(`click`, function (evt) {
-    evt.preventDefault();
-    switchCard(cardEditElement, cardElement);
-
-    document.addEventListener(`keydown`, escDownHandler);
-  });
-
-  const editCardForm = cardEditElement.querySelector(`form`);
-  editCardForm.addEventListener(`submit`, function (evt) {
-    evt.preventDefault();
-    switchCard(cardElement, cardEditElement);
-
-    document.removeEventListener(`keydown`, escDownHandler)
-  });
-
-  render(cardElement, container);
+const removeComponent = function (component) {
+  component.getElement().remove();
+  component.removeElement();
 };
 
-export {render, renderCard};
+export {render, renderCard, removeComponent, replaceCard};
