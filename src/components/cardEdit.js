@@ -1,6 +1,6 @@
-import AbstractComponent from './abstractComponent.js';
+import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
-import {isRepeating, createDate, createTime} from '../utils.js';
+import {createDate, createTime} from '../utils.js';
 
 const createHashtag = function (tagSet) {
   let fragment = ``;
@@ -18,52 +18,6 @@ const createHashtag = function (tagSet) {
   return fragment;
 };
 
-const setRepeat = function (repeatingDays) {
-  const repeatDict = {
-    repeatClass: null,
-    repeatAttr: null,
-    repeatStatus: null,
-    repeatDays: {}
-  };
-  if (isRepeating(repeatingDays)) {
-    repeatDict.repeatClass = `card--repeat`;
-    repeatDict.repeatAttr = ``;
-    repeatDict.repeatStatus = `yes`;
-    for (let day in repeatingDays) {
-      if (repeatingDays.hasOwnProperty(day)) {
-        repeatDict.repeatDays[day] = repeatingDays[day] ? `checked` : ``;
-      }
-    }
-  } else {
-    repeatDict.repeatClass = ``;
-    repeatDict.repeatAttr = `disabled`;
-    repeatDict.repeatStatus = `no`;
-    for (let day in repeatingDays) {
-      if (repeatingDays.hasOwnProperty(day)) {
-        repeatDict.repeatDays[day] = ``;
-      }
-    }
-  }
-  return repeatDict;
-};
-
-const setDeadline = function (dateObject) {
-  let deadlineStatus;
-  let deadlineAttr;
-  let value;
-  if (dateObject) {
-    const date = createDate(dateObject);
-    const time = createTime(dateObject);
-    value = `value="${date} ${time}"`;
-    deadlineStatus = `yes`;
-    deadlineAttr = ``;
-  } else {
-    value = ``;
-    deadlineStatus = `no`;
-    deadlineAttr = `disabled`;
-  }
-  return [deadlineStatus, deadlineAttr, value];
-};
 
 const setColor = function (color) {
   const colorClass = `card--${color}`;
@@ -74,32 +28,42 @@ const setColor = function (color) {
   return [colorClass, colorStatus];
 };
 
-const createCardEditTemplate = function (task) {
-  const {description, tags, dueDate, color, repeatingDays} = task;
-  const repeatDict = setRepeat(repeatingDays);
-  const [deadlineStatus, deadlineAttr, deadlineValue] = setDeadline(dueDate);
-  const [colorClass, colorStatus] = setColor(color);
-  const hashtag = createHashtag(tags);
+const createSaveButton = function (isRepeating, repeatingDays) {
+  const disabledAttr = isRepeating && !Object.values(repeatingDays).some(Boolean) ? `disabled` : ``;
+  return (
+    `<button class="card__save" type="submit" ${disabledAttr}>save</button>`
+  );
+};
 
-  let repeatFragment = ``;
-  Object.keys(repeatDict.repeatDays).forEach((element) => {
-    const repeatTemplate = (
-      `<input
-        class="visually-hidden card__repeat-day-input"
-        type="checkbox"
-        id="repeat-${element}-1"
-        name="repeat"
-        value="${element}"
-        ${repeatDict.repeatDays[element]}
-      />
-      <label class="card__repeat-day" for="repeat-${element}-1"
-        >${element}</label
-      >`
-    );
-    repeatFragment += repeatTemplate;
-  });
+const createRepeatingMarkup = function (isRepeating, repeatingDays) {
+  let repeatingMarkup = ``;
 
+  if (isRepeating) {
+    for (let day in repeatingDays) {
+      if (repeatingDays.hasOwnProperty(day)) {
+        const repeatTemplate = (
+          `<input
+            class="visually-hidden card__repeat-day-input"
+            type="checkbox"
+            id="repeat-${day}-1"
+            name="repeat"
+            value="${day}"
+            ${repeatingDays[day] ? `checked` : ``}
+          />
+          <label class="card__repeat-day" for="repeat-${day}-1"
+            >${day}</label
+          >`
+        );
+        repeatingMarkup += repeatTemplate;
+      }
+    }
+  }
+  return repeatingMarkup;
+};
+
+const createColorMarkup = function (colorStatus) {
   let colorsFragment = ``;
+
   Object.keys(colorStatus).forEach((element) => {
     const colorTemplate = (
       `<input
@@ -119,8 +83,34 @@ const createCardEditTemplate = function (task) {
     colorsFragment += colorTemplate;
   });
 
+  return colorsFragment;
+};
+
+const createCardEditTemplate = function (task, isDateShowing, isRepeating, repeatingDays) {
+  let {description, tags, dueDate, color} = task;
+
+  if (!dueDate) {
+    dueDate = new Date();
+  }
+  const deadlineStatus = isDateShowing ? `yes` : `no`;
+  const deadlineAttr = isDateShowing ? `` : `disabled`;
+  const deadlineValue = isDateShowing ? `value="${createDate(dueDate)} ${createTime(dueDate)}"` : ``;
+
+
+  const repeatClass = isRepeating ? `card--repeat` : ``;
+  const repeatAttr = isRepeating ? `` : `disabled`;
+  const repeatStatus = isRepeating ? `yes` : `no`;
+  const repeatingFragment = createRepeatingMarkup(isRepeating, repeatingDays);
+
+  const hashtag = createHashtag(tags);
+
+  const [colorClass, colorStatus] = setColor(color);
+  let colorsFragment = createColorMarkup(colorStatus);
+
+  const saveButton = createSaveButton(isRepeating, repeatingDays);
+
   return (
-    `<article class="card card--edit ${colorClass} ${repeatDict.repeatClass}">
+    `<article class="card card--edit ${colorClass} ${repeatClass}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__color-bar">
@@ -159,12 +149,12 @@ const createCardEditTemplate = function (task) {
                 </fieldset>
 
                 <button class="card__repeat-toggle" type="button">
-                  repeat:<span class="card__repeat-status">${repeatDict.repeatStatus}</span>
+                  repeat:<span class="card__repeat-status">${repeatStatus}</span>
                 </button>
 
-                <fieldset class="card__repeat-days" ${repeatDict.repeatAttr}>
+                <fieldset class="card__repeat-days" ${repeatAttr}>
                   <div class="card__repeat-days-inner">
-                    ${repeatFragment}
+                    ${repeatingFragment}
                   </div>
                 </fieldset>
               </div>
@@ -194,7 +184,7 @@ const createCardEditTemplate = function (task) {
           </div>
 
           <div class="card__status-btns">
-            <button class="card__save" type="submit">save</button>
+            ${saveButton}
             <button class="card__delete" type="button">delete</button>
           </div>
         </div>
@@ -203,20 +193,70 @@ const createCardEditTemplate = function (task) {
   );
 };
 
-class CardEdit extends AbstractComponent {
+class CardEdit extends AbstractSmartComponent {
 
   constructor(task) {
     super();
     this._task = task;
+
+    this._isDateShowing = !!task.dueDate;
+    this._isRepeating = Object.values(task.repeatingDays).some(Boolean);
+    this._repeatingDays = Object.assign({}, task.repeatingDays);
+    this._date = task.dueDate;
+
+    this._submitHandler = null;
+    this._subscribeOnEvents();
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
   }
 
   setSubmitHandler(handler) {
+    if (!this._submitHandler) {
+      this._submitHandler = handler;
+    }
     const editCardForm = this.getElement().querySelector(`form`);
     editCardForm.addEventListener(`submit`, handler);
   }
 
   getTemplate() {
-    return createCardEditTemplate(this._task);
+    return createCardEditTemplate(this._task, this._isDateShowing, this._isRepeating, this._repeatingDays);
+  }
+
+  reset() {
+    const task = this._task;
+    this._isDateShowing = !!task.dueDate;
+    this._isRepeating = Object.values(task.repeatingDays).some(Boolean);
+    this._repeatingDays = Object.assign({}, task.repeatingDays);
+
+    this.rerender();
+  }
+
+  _subscribeOnEvents() {
+    const dateButton = this.getElement().querySelector(`.card__date-deadline-toggle`);
+    dateButton.addEventListener(`click`, () => {
+      this._isDateShowing = !this._isDateShowing;
+
+      this.rerender();
+    });
+    this.setSubmitHandler(this._submitHandler);
+
+    const cardRepeatButton = this.getElement().querySelector(`.card__repeat-toggle`);
+    cardRepeatButton.addEventListener(`click`, () => {
+      this._isRepeating = !this._isRepeating;
+
+      this.rerender();
+    });
+
+    const cardRepeatDays = this.getElement().querySelectorAll(`.card__repeat-day-input`);
+    cardRepeatDays.forEach((day) => {
+      day.addEventListener(`click`, (evt) => {
+        this._repeatingDays[evt.target.value] = evt.target.checked;
+
+        this.rerender();
+      });
+    });
   }
 }
 

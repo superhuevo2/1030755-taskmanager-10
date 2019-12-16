@@ -4,7 +4,7 @@ import {render} from './render.js';
 import Menu from './components/menu.js';
 import Filter from './components/filter.js';
 import Board from './components/board.js';
-import BoardController from './boardController.js';
+import BoardController from './controller/boardController.js';
 
 
 const TASK_COUNT = 25;

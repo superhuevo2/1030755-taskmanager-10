@@ -41,6 +41,8 @@ const renderCard = function (cardComponent, cardEditComponent, container) {
   cardComponent.setEditHandler(function (evt) {
     editHandler(evt, cardEditComponent, cardComponent);
   });
+  cardComponent.setFavoritesHandler();
+
   cardEditComponent.setSubmitHandler(function (evt) {
     submitHandler(evt, cardComponent, cardEditComponent);
   });
@@ -62,4 +64,4 @@ const removeComponent = function (component) {
   component.removeElement();
 };
 
-export {render, renderCard, removeComponent};
+export {render, renderCard, removeComponent, replaceComponent};

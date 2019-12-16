@@ -17,10 +17,22 @@ const createHashtag = function (tagSet) {
   return fragment;
 };
 
+const createButtons = function (name, isActive) {
+  return (
+    `<button
+      type="button"
+      class="card__btn card__btn--${name} ${isActive ? `` : `card__btn--disabled`}"
+    >
+      ${name}
+    </button>`
+  );
+};
+
 
 const createCardTemplate = function (task) {
-  const {description, tags, dueDate, color, repeatingDays} = task;
-
+  const {description, tags, color, repeatingDays, dueDate, isArchive, isFavorite} = task;
+  const createArchiveButton = createButtons(`archive`, isArchive);
+  const createFavoriteButton = createButtons(`favorites`, isFavorite);
   const isDateShowing = Boolean(dueDate);
   const date = isDateShowing ? createDate(dueDate) : ``;
   const time = isDateShowing ? createTime(dueDate) : ``;
@@ -36,15 +48,8 @@ const createCardTemplate = function (task) {
             <button type="button" class="card__btn card__btn--edit">
               edit
             </button>
-            <button type="button" class="card__btn card__btn--archive">
-              archive
-            </button>
-            <button
-              type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
-            >
-              favorites
-            </button>
+              ${createArchiveButton}
+              ${createFavoriteButton}
           </div>
 
           <div class="card__color-bar">
@@ -91,6 +96,16 @@ class Card extends AbstractComponent {
   setEditHandler(handler) {
     const editButton = this.getElement().querySelector(`.card__btn--edit`);
     editButton.addEventListener(`click`, handler);
+  }
+
+  setFavoritesHandler(handler) {
+    const favoritesButton = this.getElement().querySelector(`.card__btn--favorites`);
+    favoritesButton.addEventListener(`click`, handler);
+  }
+
+  setArchiveHandler(handler) {
+    const archiveButton = this.getElement().querySelector(`.card__btn--archive`);
+    archiveButton.addEventListener(`click`, handler);
   }
 
   getTemplate() {
