@@ -24,6 +24,10 @@ class TaskController {
   }
 
   render(task) {
+    const oldCard = this._card;
+    const oldCardEdit = this._cardEdit;
+
+
     this._card = new Card(task);
     this._cardEdit = new CardEdit(task);
 
@@ -56,7 +60,13 @@ class TaskController {
       document.removeEventListener(`keydown`, this._escDownHandler);
     });
 
-    render(this._card, this._container);
+    if (oldCard && oldCardEdit) {
+      replaceComponent(this._card, oldCard);
+      replaceComponent(this._cardEdit, oldCardEdit);
+    } else {
+      render(this._card, this._container);
+    }
+
   }
 
   remove() {

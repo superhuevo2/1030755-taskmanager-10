@@ -91,7 +91,7 @@ class BoardController {
       }
       return false;
     });
-    taskController.remove();
+
     taskController.render(newTask);
   }
 
