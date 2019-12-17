@@ -54,8 +54,13 @@ const renderCard = function (cardComponent, cardEditComponent, container) {
 const replaceComponent = function (newComponent, oldComponent) {
   const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
-  const parentElement = oldElement.parentNode;
-  parentElement.replaceChild(newElement, oldElement);
+  const parentElement = oldElement.parentElement;
+
+  const isElementsExist = !!(newElement && oldElement && parentElement);
+
+  if (isElementsExist && parentElement.contains(oldElement)) {
+    parentElement.replaceChild(newElement, oldElement);
+  }
 };
 
 
