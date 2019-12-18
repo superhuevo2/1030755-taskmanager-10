@@ -1,23 +1,8 @@
 import AbstractComponent from './abstractComponent.js';
-import {isExpired, isRepeating, createDate, createTime} from '../utils.js';
+import {isExpired, isRepeating, createDate, createTime, createHashtag} from '../utils.js';
 
-const createHashtag = function (tagSet) {
-  let fragment = ``;
-  tagSet.forEach((element) => {
-    const template = (
-      `<span class="card__hashtag-inner">
-        <span class="card__hashtag-name">
-          #${element}
-        </span>
-      </span>
-      `
-    );
-    fragment += template;
-  });
-  return fragment;
-};
 
-const createButtons = function (name, isActive) {
+const createButtons = (name, isActive) => {
   return (
     `<button
       type="button"
@@ -29,7 +14,7 @@ const createButtons = function (name, isActive) {
 };
 
 
-const createCardTemplate = function (task) {
+const createCardTemplate = (task) => {
   const {description, tags, color, repeatingDays, dueDate, isArchive, isFavorite} = task;
   const createArchiveButton = createButtons(`archive`, isArchive);
   const createFavoriteButton = createButtons(`favorites`, isFavorite);

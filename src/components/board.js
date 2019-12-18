@@ -1,6 +1,6 @@
 import AbstractComponent from './abstractComponent.js';
 
-const createBoardTemplate = function () {
+const createBoardTemplate = () => {
   return (
     `<section class="board container">
     </section>`

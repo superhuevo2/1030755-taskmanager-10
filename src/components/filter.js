@@ -1,6 +1,6 @@
 import AbstractComponent from './abstractComponent.js';
 
-const createFilterTemplate = function (filters) {
+const createFilterTemplate = (filters) => {
   let filtersTemplate = ``;
   filters.forEach((filter) => {
     const filterTemplate = (

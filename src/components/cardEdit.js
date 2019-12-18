@@ -1,25 +1,9 @@
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
-import {createDate, createTime} from '../utils.js';
-
-const createHashtag = function (tagSet) {
-  let fragment = ``;
-  tagSet.forEach((element) => {
-    const template = (
-      `<span class="card__hashtag-inner">
-        <span class="card__hashtag-name">
-          #${element}
-        </span>
-      </span>
-      `
-    );
-    fragment += template;
-  });
-  return fragment;
-};
+import {createDate, createTime, createHashtag} from '../utils.js';
 
 
-const setColor = function (color) {
+const setColor = (color) => {
   const colorClass = `card--${color}`;
   const colorStatus = {};
   COLORS.forEach(function (el) {
@@ -28,14 +12,14 @@ const setColor = function (color) {
   return [colorClass, colorStatus];
 };
 
-const createSaveButton = function (isRepeating, repeatingDays) {
+const createSaveButton = (isRepeating, repeatingDays) => {
   const disabledAttr = isRepeating && !Object.values(repeatingDays).some(Boolean) ? `disabled` : ``;
   return (
     `<button class="card__save" type="submit" ${disabledAttr}>save</button>`
   );
 };
 
-const createRepeatingMarkup = function (isRepeating, repeatingDays) {
+const createRepeatingMarkup = (isRepeating, repeatingDays) => {
   let repeatingMarkup = ``;
 
   if (isRepeating) {
@@ -61,7 +45,7 @@ const createRepeatingMarkup = function (isRepeating, repeatingDays) {
   return repeatingMarkup;
 };
 
-const createColorMarkup = function (colorStatus) {
+const createColorMarkup = (colorStatus) => {
   let colorsFragment = ``;
 
   Object.keys(colorStatus).forEach((element) => {
@@ -86,7 +70,7 @@ const createColorMarkup = function (colorStatus) {
   return colorsFragment;
 };
 
-const createCardEditTemplate = function (task, isDateShowing, isRepeating, repeatingDays) {
+const createCardEditTemplate = (task, isDateShowing, isRepeating, repeatingDays) => {
   let {description, tags, dueDate, color} = task;
 
   if (!dueDate) {
