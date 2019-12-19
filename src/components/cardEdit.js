@@ -6,7 +6,7 @@ import {createDate, createTime, createHashtag} from '../utils.js';
 const setColor = (color) => {
   const colorClass = `card--${color}`;
   const colorStatus = {};
-  COLORS.forEach(function (el) {
+  COLORS.forEach((el) => {
     colorStatus[el] = (el === color) ? `checked` : ``;
   });
   return [colorClass, colorStatus];
