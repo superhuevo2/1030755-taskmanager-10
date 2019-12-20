@@ -31,8 +31,7 @@ class TaskController {
     this._card = new Card(task);
     this._cardEdit = new CardEdit(task);
 
-    this._card.setEditHandler((evt) => {
-      evt.preventDefault();
+    this._card.setEditHandler(() => {
       this._viewChangeHandler();
       this.replaceCardToEdit();
 

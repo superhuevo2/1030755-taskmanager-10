@@ -200,6 +200,7 @@ class CardEdit extends AbstractSmartComponent {
     if (!this._submitHandler) {
       this._submitHandler = handler;
     }
+
     const editCardForm = this.getElement().querySelector(`form`);
     editCardForm.addEventListener(`submit`, (evt) => {
       evt.preventDefault();

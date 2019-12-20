@@ -80,7 +80,10 @@ class Card extends AbstractComponent {
 
   setEditHandler(handler) {
     const editButton = this.getElement().querySelector(`.card__btn--edit`);
-    editButton.addEventListener(`click`, handler);
+    editButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      handler();
+    });
   }
 
   setFavoritesHandler(handler) {
