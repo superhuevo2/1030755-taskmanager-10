@@ -1,15 +1,17 @@
 import {genTaskList} from './mock/task.js';
-import {genFilterList} from './mock/filter.js';
-import {render} from './render.js';
+import {render} from './utils/render.js';
 import Menu from './components/menu.js';
-import Filter from './components/filter.js';
 import Board from './components/board.js';
 import BoardController from './controller/boardController.js';
+import TasksModel from './models/tasks.js';
+import FilterController from './controller/filterController.js';
 
 
 const TASK_COUNT = 25;
 const taskList = genTaskList(TASK_COUNT);
-const filterList = genFilterList(taskList);
+
+const tasksModel = new TasksModel();
+tasksModel.setTasks(taskList);
 
 
 const menuContainer = document.querySelector(`.main__control`);
@@ -18,13 +20,13 @@ render(menu, menuContainer);
 
 
 const main = document.querySelector(`.main`);
-const filter = new Filter(filterList);
-render(filter, main);
+const filterController = new FilterController(tasksModel, main);
+filterController.render();
 
 
 const board = new Board();
 render(board, main);
 
-const boardController = new BoardController(board);
-boardController.render(taskList);
+const boardController = new BoardController(tasksModel, board);
+boardController.render();
 

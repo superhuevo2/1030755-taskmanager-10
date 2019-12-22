@@ -1,4 +1,4 @@
-import {RenderPosition} from './const.js';
+import {RenderPosition} from '../const.js';
 
 const render = (component, container, place = RenderPosition.BEFOREEND) => {
   const element = component.getElement();

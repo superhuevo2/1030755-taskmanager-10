@@ -1,5 +1,5 @@
 import AbstractComponent from './abstractComponent.js';
-import {isExpired, isRepeating, createDate, createTime, createHashtag} from '../utils.js';
+import {isExpired, isRepeating, createDate, createTime, createHashtag} from '../utils/utils.js';
 
 
 const createButtons = (name, isActive) => {

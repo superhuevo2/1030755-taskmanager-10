@@ -48,7 +48,7 @@ function getFilterToCount(tasks) {
   return filterToCount;
 }
 
-function genFilterList(tasks) {
+function getFiltersCounters(tasks) {
   const filterToCount = getFilterToCount(tasks);
   const filterList = Object.keys(filterToCount)
     .map((element) => ({
@@ -59,4 +59,4 @@ function genFilterList(tasks) {
   return filterList;
 }
 
-export {genFilterList};
+export {getFiltersCounters};

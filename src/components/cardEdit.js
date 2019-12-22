@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
-import {createDate, createTime, createHashtag} from '../utils.js';
+import {createDate, createTime, createHashtag} from '../utils/utils.js';
 
 
 const setColor = (color) => {
@@ -201,11 +201,22 @@ class CardEdit extends AbstractSmartComponent {
       this._submitHandler = handler;
     }
     const editCardForm = this.getElement().querySelector(`form`);
-    editCardForm.addEventListener(`submit`, handler);
+    editCardForm.addEventListener(`submit`, (evt) => {
+      evt.preventDefault();
+
+      handler();
+    });
   }
 
   getTemplate() {
     return createCardEditTemplate(this._task, this._isDateShowing, this._isRepeating, this._repeatingDays);
+  }
+
+  getChangedInfo() {
+    return {
+      repeatingDays: this._repeatingDays,
+      dueDate: this._date
+    };
   }
 
   reset() {
@@ -219,8 +230,14 @@ class CardEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const dateButton = this.getElement().querySelector(`.card__date-deadline-toggle`);
-    dateButton.addEventListener(`click`, () => {
+    dateButton.addEventListener(`click`, (evt) => {
       this._isDateShowing = !this._isDateShowing;
+
+      if (this._isDateShowing) {
+        this._date = new Date(evt.target.value);
+      } else {
+        this._date = null;
+      }
 
       this.rerender();
     });
@@ -229,6 +246,13 @@ class CardEdit extends AbstractSmartComponent {
     const cardRepeatButton = this.getElement().querySelector(`.card__repeat-toggle`);
     cardRepeatButton.addEventListener(`click`, () => {
       this._isRepeating = !this._isRepeating;
+
+      if (!this._isRepeating) {
+        Object.keys(this._repeatingDays).forEach((day) => {
+          this._repeatingDays[day] = false;
+        });
+
+      }
 
       this.rerender();
     });

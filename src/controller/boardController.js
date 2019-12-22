@@ -1,9 +1,9 @@
-import {render, removeComponent} from '../render.js';
+import {render, removeComponent} from '../utils/render.js';
 import Sort from '../components/sort.js';
 import NoTask from '../components/no-task.js';
 import BoardTasks from '../components/board-tasks.js';
 import LoadMoreButton from '../components/button.js';
-import {isNotActive} from '../utils.js';
+import {isNotActive} from '../utils/utils.js';
 import {CARD_SHOWING} from '../const.js';
 import TaskController from './taskController.js';
 
@@ -27,12 +27,15 @@ const renderCards = (taskList, container, dataChangeHandler, viewChangeHandler, 
 
 
 class BoardController {
-  constructor(container) {
+  constructor(tasksModel, container) {
+    this._tasksModel = tasksModel;
     this._container = container;
 
     this._tasks = [];
     this._taskControllers = [];
+
     this._showedTaskCount = FIRST_ELEMENT;
+
     this._noTaskComponent = new NoTask();
     this._sortComponent = new Sort();
     this._boardTasks = new BoardTasks();
@@ -44,9 +47,8 @@ class BoardController {
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
-  render(tasks) {
-    this._tasks = tasks;
-    this._sortedTasks = tasks;
+  render() {
+    const tasks = this._tasksModel.getTasks();
 
     if (isNotActive(tasks)) {
       render(this._noTaskComponent, this._container);
@@ -57,12 +59,12 @@ class BoardController {
     this._sortComponent.setSortClickHandler(this._sortTypeChangeHandler);
 
     render(this._boardTasks, this._container);
-    const newTasks = renderCards(this._tasks, this._boardTasks, this._dataChangeHandler, this._viewChangeHandler, this._showedTaskCount, CARD_SHOWING);
+    const newTasks = renderCards(tasks, this._boardTasks, this._dataChangeHandler, this._viewChangeHandler, this._showedTaskCount, CARD_SHOWING);
     this._taskControllers = this._taskControllers.concat(newTasks);
 
     this._showedTaskCount += CARD_SHOWING;
 
-    this._renderLoadMoreButton(this._tasks);
+    this._renderLoadMoreButton(tasks);
   }
 
   _renderLoadMoreButton(tasks) {
@@ -83,14 +85,8 @@ class BoardController {
     this._loadMoreButton.setClickHandler(loadMoreClickHandler);
   }
 
-  _dataChangeHandler(taskController, oldTask, newTask) {
-    this._tasks.some((task, index) => {
-      if (task === oldTask) {
-        this._tasks[index] = newTask;
-        return true;
-      }
-      return false;
-    });
+  _dataChangeHandler(taskController, id, newTask) {
+    this._tasksModel.renewTask(id, newTask);
 
     taskController.render(newTask);
   }
@@ -102,7 +98,8 @@ class BoardController {
   }
 
   _sortTypeChangeHandler(sortType) {
-    const sortedTasks = Array.from(this._tasks).sort(SORT_TYPE_TO_FUNCTION[sortType]);
+    const tasks = this._tasksModel.getTasks();
+    const sortedTasks = Array.from(tasks).sort(SORT_TYPE_TO_FUNCTION[sortType]);
 
     this._boardTasks.getElement().innerHTML = ``;
     const newTasks = renderCards(sortedTasks, this._boardTasks, this._dataChangeHandler, this._viewChangeHandler, FIRST_ELEMENT, this._showedTaskCount);

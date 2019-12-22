@@ -1,4 +1,4 @@
-import {MONTH} from './const.js';
+import {MONTH} from '../const.js';
 
 const createElement = (template) => {
   const element = document.createElement(`div`);
