@@ -1,7 +1,7 @@
 import flatpickr from 'flatpickr';
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
-import {createDate, createTime, createHashtag} from '../utils.js';
+import {createDate, createTime, createHashtag} from '../utils/utils.js';
 require(`flatpickr/dist/flatpickr.min.css`);
 
 
