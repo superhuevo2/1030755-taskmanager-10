@@ -6,7 +6,7 @@ const SortType = {
   DATE_DOWN: `dateDown`
 };
 
-const createSortTemplate = function () {
+const createSortTemplate = () => {
   return (
     `<div class="board__filter-list">
       <a href="#" class="board__filter" data-sort="${SortType.DEFAULT}" >SORT BY DEFAULT</a>

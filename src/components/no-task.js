@@ -1,6 +1,6 @@
 import AbstractComponent from './abstractComponent.js';
 
-const createNoTasksTemplate = function () {
+const createNoTasksTemplate = () => {
   return (
     `<p class="board__no-tasks">
       Click «ADD NEW TASK» in menu to create your first task

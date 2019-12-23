@@ -12,6 +12,15 @@ const DEFAULT_REPEATING_DAYS = {
   'su': false,
 };
 
+function* genID() {
+  let id = 1;
+  while (true) {
+    yield id++;
+  }
+}
+
+const generatorID = genID();
+
 
 /**
  * return random integer. from <= integer < to.
@@ -60,7 +69,8 @@ function genTask() {
     tags: getTags(),
     color: COLORS[getRandom(0, COLORS.length)],
     isFavorite: Math.random() > 0.5,
-    isArchive: Math.random() > 0.5
+    isArchive: Math.random() > 0.5,
+    id: generatorID.next().value
   };
 
   return task;

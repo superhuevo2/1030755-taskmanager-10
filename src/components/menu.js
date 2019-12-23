@@ -1,6 +1,6 @@
 import AbstractComponent from './abstractComponent.js';
 
-const createMenuTemplate = function () {
+const createMenuTemplate = () => {
   return (
     `<section class="control__btn-wrap">
       <input
