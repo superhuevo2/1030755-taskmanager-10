@@ -1,4 +1,5 @@
-import {MONTH} from '../const.js';
+import moment from 'moment';
+
 
 const createElement = (template) => {
   const element = document.createElement(`div`);
@@ -15,19 +16,11 @@ const isRepeating = (days) => {
 };
 
 const createDate = (date) => {
-  return `${date.getDate()} ${MONTH[date.getMonth()]}`;
-};
-
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
+  return moment(date).format(`DD MMMM`);
 };
 
 const createTime = (date) => {
-  let hours = castTimeFormat(date.getHours());
-  let minutes = castTimeFormat(date.getMinutes());
-  let interval = date.getHours() > 11 ? `PM` : `AM`;
-
-  return `${hours}:${minutes} ${interval}`;
+  return moment(date).format(`hh:mm A`);
 };
 
 const isNotActive = (taskList) => {

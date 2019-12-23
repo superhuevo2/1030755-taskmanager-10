@@ -1,6 +1,8 @@
+import flatpickr from 'flatpickr';
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
 import {createDate, createTime, createHashtag} from '../utils/utils.js';
+require(`flatpickr/dist/flatpickr.min.css`);
 
 
 const setColor = (color) => {
@@ -73,12 +75,10 @@ const createColorMarkup = (colorStatus) => {
 const createCardEditTemplate = (task, isDateShowing, isRepeating, repeatingDays) => {
   let {description, tags, dueDate, color} = task;
 
-  if (!dueDate) {
-    dueDate = new Date();
-  }
+
   const deadlineStatus = isDateShowing ? `yes` : `no`;
   const deadlineAttr = isDateShowing ? `` : `disabled`;
-  const deadlineValue = isDateShowing ? `value="${createDate(dueDate)} ${createTime(dueDate)}"` : ``;
+  const deadlineValue = isDateShowing && dueDate ? `value="${createDate(dueDate)} ${createTime(dueDate)}"` : ``;
 
 
   const repeatClass = isRepeating ? `card--repeat` : ``;
@@ -188,6 +188,9 @@ class CardEdit extends AbstractSmartComponent {
     this._repeatingDays = Object.assign({}, task.repeatingDays);
     this._date = task.dueDate;
 
+    this._flatpickr = null;
+    this._applyFlatpickr();
+
     this._submitHandler = null;
     this._subscribeOnEvents();
   }
@@ -200,6 +203,7 @@ class CardEdit extends AbstractSmartComponent {
     if (!this._submitHandler) {
       this._submitHandler = handler;
     }
+
     const editCardForm = this.getElement().querySelector(`form`);
     editCardForm.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
@@ -212,11 +216,18 @@ class CardEdit extends AbstractSmartComponent {
     return createCardEditTemplate(this._task, this._isDateShowing, this._isRepeating, this._repeatingDays);
   }
 
+
   getChangedInfo() {
     return {
       repeatingDays: this._repeatingDays,
       dueDate: this._date
     };
+  }
+
+  rerender() {
+    super.rerender();
+
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -226,6 +237,22 @@ class CardEdit extends AbstractSmartComponent {
     this._repeatingDays = Object.assign({}, task.repeatingDays);
 
     this.rerender();
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    if (this._isDateShowing) {
+      const dateElement = this.getElement().querySelector(`.card__date`);
+      this._flatpickr = flatpickr(dateElement, {
+        altInput: true,
+        allowInput: true,
+        defaultDate: this._date,
+      });
+    }
   }
 
   _subscribeOnEvents() {
