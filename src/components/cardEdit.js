@@ -1,13 +1,9 @@
 import flatpickr from 'flatpickr';
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
-<<<<<<< HEAD
-import {createDate, createTime, createHashtag} from '../utils/utils.js';
-
-=======
 import {createDate, createTime, createHashtag} from '../utils.js';
 require(`flatpickr/dist/flatpickr.min.css`);
->>>>>>> подключил flatpickr
+
 
 const setColor = (color) => {
   const colorClass = `card--${color}`;
