@@ -31,7 +31,6 @@ class BoardController {
     this._tasksModel = tasksModel;
     this._container = container;
 
-    this._tasks = [];
     this._taskControllers = [];
 
     this._showedTaskCount = FIRST_ELEMENT;
@@ -48,9 +47,22 @@ class BoardController {
   }
 
   render() {
-    const tasks = this._tasksModel.getTasks();
+    this._tasksModel.setChangeFilterHandler(() => {
+      this._container.getElement().innerHTML = ``;
 
-    if (isNotActive(tasks)) {
+      this._showedTaskCount = FIRST_ELEMENT;
+
+      this._noTaskComponent = new NoTask();
+      this._sortComponent = new Sort();
+      this._boardTasks = new BoardTasks();
+      this._loadMoreButton = new LoadMoreButton();
+
+      this.render();
+    });
+
+    const tasks = this._tasksModel.getFilteredTasks();
+
+    if (isNotActive(tasks) && this._tasksModel.getActiveFilter() !== `archive`) {
       render(this._noTaskComponent, this._container);
       return;
     }
@@ -98,7 +110,7 @@ class BoardController {
   }
 
   _sortTypeChangeHandler(sortType) {
-    const tasks = this._tasksModel.getTasks();
+    const tasks = this._tasksModel.getFilteredTasks();
     const sortedTasks = Array.from(tasks).sort(SORT_TYPE_TO_FUNCTION[sortType]);
 
     this._boardTasks.getElement().innerHTML = ``;

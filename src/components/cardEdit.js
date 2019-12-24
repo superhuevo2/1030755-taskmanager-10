@@ -198,7 +198,7 @@ class CardEdit extends AbstractSmartComponent {
 
   recoveryListeners() {
     this._subscribeOnEvents();
-    this.setSubmitHandler(this._submitHandler)
+    this.setSubmitHandler(this._submitHandler);
   }
 
   setSubmitHandler(handler) {
@@ -279,7 +279,7 @@ class CardEdit extends AbstractSmartComponent {
         this._date = moment(evt.target.value).toDate();
 
         this.rerender();
-      })
+      });
     }
 
     const cardRepeatButton = element.querySelector(`.card__repeat-toggle`);

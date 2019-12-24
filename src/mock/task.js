@@ -45,8 +45,8 @@ function getDate() {
 
 function getRepeatingDays() {
   return Object.assign({}, DEFAULT_REPEATING_DAYS, {
-    'tu': Math.random() > 0.4,
-    'sa': Math.random() > 0.3
+    'tu': Math.random() > 0.9,
+    'sa': Math.random() > 0.9
   });
 }
 

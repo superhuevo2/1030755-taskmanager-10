@@ -1,18 +1,9 @@
 import moment from 'moment';
 
-
 const createElement = (template) => {
   const element = document.createElement(`div`);
   element.innerHTML = template;
   return element.firstChild;
-};
-
-const isExpired = (date) => {
-  return date instanceof Date && moment(date).isAfter(moment());
-};
-
-const isRepeating = (days) => {
-  return Object.values(days).some(Boolean);
 };
 
 const createDate = (date) => {
@@ -44,4 +35,4 @@ const createHashtag = (tagSet) => {
 };
 
 
-export {createElement, isExpired, isRepeating, createDate, createTime, isNotActive, createHashtag};
+export {createElement, createDate, createTime, isNotActive, createHashtag};

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstractComponent.js';
-import {isExpired, isRepeating, createDate, createTime, createHashtag} from '../utils/utils.js';
-
+import {createDate, createTime, createHashtag} from '../utils/utils.js';
+import {isOverdue, isRepeating} from '../utils/filter.js';
 
 const createButtons = (name, isActive) => {
   return (
@@ -23,7 +23,7 @@ const createCardTemplate = (task) => {
   const time = isDateShowing ? createTime(dueDate) : ``;
   const hashtag = createHashtag(tags);
   const repeatClass = isRepeating(repeatingDays) ? `card--repeat` : ``;
-  const deadlineClass = isExpired(dueDate) ? `card--deadline` : ``;
+  const deadlineClass = isOverdue(dueDate) ? `card--deadline` : ``;
 
   return (
     `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
