@@ -1,13 +1,14 @@
 import {FILTERS} from '../const.js';
+import moment from 'moment';
 
 function isToday(dateObject) {
   if (dateObject === null) {
     return false;
   }
+
   const today = new Date();
-  return dateObject.getDate() === today.getDate()
-      && dateObject.getMonth() === today.getMonth()
-      && dateObject.getFullYear() === today.getFullYear();
+
+  return moment(dateObject).isSame(moment(today), `day`);
 }
 
 function isRepeating(dayDict) {

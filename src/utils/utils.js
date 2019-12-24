@@ -8,7 +8,7 @@ const createElement = (template) => {
 };
 
 const isExpired = (date) => {
-  return date instanceof Date && date < Date.now();
+  return date instanceof Date && moment(date).isAfter(moment());
 };
 
 const isRepeating = (days) => {

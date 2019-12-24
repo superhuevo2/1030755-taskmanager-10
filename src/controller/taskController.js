@@ -60,6 +60,7 @@ class TaskController {
 
       document.removeEventListener(`keydown`, this._escDownHandler);
     });
+
     if (oldCard && oldCardEdit) {
       replaceComponent(this._card, oldCard);
       replaceComponent(this._cardEdit, oldCardEdit);

@@ -2,6 +2,7 @@ import flatpickr from 'flatpickr';
 import AbstractSmartComponent from './abstractSmartComponent.js';
 import {COLORS} from '../const.js';
 import {createDate, createTime, createHashtag} from '../utils/utils.js';
+import moment from 'moment';
 require(`flatpickr/dist/flatpickr.min.css`);
 
 
@@ -72,8 +73,8 @@ const createColorMarkup = (colorStatus) => {
   return colorsFragment;
 };
 
-const createCardEditTemplate = (task, isDateShowing, isRepeating, repeatingDays) => {
-  let {description, tags, dueDate, color} = task;
+const createCardEditTemplate = (task, isDateShowing, dueDate, isRepeating, repeatingDays) => {
+  let {description, tags, color} = task;
 
 
   const deadlineStatus = isDateShowing ? `yes` : `no`;
@@ -197,6 +198,7 @@ class CardEdit extends AbstractSmartComponent {
 
   recoveryListeners() {
     this._subscribeOnEvents();
+    this.setSubmitHandler(this._submitHandler)
   }
 
   setSubmitHandler(handler) {
@@ -213,7 +215,7 @@ class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createCardEditTemplate(this._task, this._isDateShowing, this._isRepeating, this._repeatingDays);
+    return createCardEditTemplate(this._task, this._isDateShowing, this._date, this._isRepeating, this._repeatingDays);
   }
 
 
@@ -256,21 +258,31 @@ class CardEdit extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
-    const dateButton = this.getElement().querySelector(`.card__date-deadline-toggle`);
+    const element = this.getElement();
+
+    const dateButton = element.querySelector(`.card__date-deadline-toggle`);
     dateButton.addEventListener(`click`, (evt) => {
       this._isDateShowing = !this._isDateShowing;
 
       if (this._isDateShowing) {
-        this._date = new Date(evt.target.value);
+        this._date = evt.target.value ? new Date(evt.target.value) : new Date();
       } else {
         this._date = null;
       }
 
       this.rerender();
     });
-    this.setSubmitHandler(this._submitHandler);
 
-    const cardRepeatButton = this.getElement().querySelector(`.card__repeat-toggle`);
+    if (this._isDateShowing) {
+      const dateInput = element.querySelector(`.card__date`);
+      dateInput.addEventListener(`change`, (evt) => {
+        this._date = moment(evt.target.value).toDate();
+
+        this.rerender();
+      })
+    }
+
+    const cardRepeatButton = element.querySelector(`.card__repeat-toggle`);
     cardRepeatButton.addEventListener(`click`, () => {
       this._isRepeating = !this._isRepeating;
 
@@ -284,7 +296,7 @@ class CardEdit extends AbstractSmartComponent {
       this.rerender();
     });
 
-    const cardRepeatDays = this.getElement().querySelectorAll(`.card__repeat-day-input`);
+    const cardRepeatDays = element.querySelectorAll(`.card__repeat-day-input`);
     cardRepeatDays.forEach((day) => {
       day.addEventListener(`click`, (evt) => {
         this._repeatingDays[evt.target.value] = evt.target.checked;
