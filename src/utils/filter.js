@@ -2,7 +2,7 @@ import {FILTERS} from '../const.js';
 import moment from 'moment';
 
 const isOverdue = (date) => {
-  return date instanceof Date && moment(date).isAfter(moment());
+  return date instanceof Date && moment(date).isBefore(moment());
 };
 
 const isToday = (date) => {
@@ -25,23 +25,24 @@ const getFilterToCount = (tasks) => {
   });
   filterToCount[`all`] = tasks.length;
   tasks.forEach((element) => {
-    if (isOverdue(element.dueDate)) {
-      filterToCount[`overdue`] += 1;
-    }
-    if (isToday(element.dueDate)) {
-      filterToCount[`today`] += 1;
-    }
-    if (element.isFavorite) {
-      filterToCount[`favorite`] += 1;
-    }
-    if (isRepeating(element.repeatingDays)) {
-      filterToCount[`repeating`] += 1;
-    }
-    if (element.tags.size) {
-      filterToCount[`tags`] += 1;
-    }
     if (element.isArchive) {
       filterToCount[`archive`] += 1;
+    } else {
+      if (isOverdue(element.dueDate)) {
+        filterToCount[`overdue`] += 1;
+      }
+      if (isToday(element.dueDate)) {
+        filterToCount[`today`] += 1;
+      }
+      if (element.isFavorite) {
+        filterToCount[`favorite`] += 1;
+      }
+      if (isRepeating(element.repeatingDays)) {
+        filterToCount[`repeating`] += 1;
+      }
+      if (element.tags.size) {
+        filterToCount[`tags`] += 1;
+      }
     }
   });
   return filterToCount;

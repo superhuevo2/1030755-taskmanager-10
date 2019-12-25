@@ -69,7 +69,7 @@ function genTask() {
     tags: getTags(),
     color: COLORS[getRandom(0, COLORS.length)],
     isFavorite: Math.random() > 0.5,
-    isArchive: Math.random() > 0.5,
+    isArchive: Math.random() > 0.8,
     id: generatorID.next().value
   };
 

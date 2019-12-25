@@ -1,5 +1,15 @@
 import {isOverdue, isToday, isRepeating} from '../utils/filter.js';
 
+const filterToCondition = {
+  all: () => true,
+  overdue: (task) => isOverdue(task.dueDate) && !task.isArchive,
+  today: (task) => isToday(task.dueDate) && !task.isArchive,
+  favorite: (task) => task.isFavorite && !task.isArchive,
+  repeating: (task) => isRepeating(task) && !task.isArchive,
+  tags: (task) => task.tags.size && !task.isArchive,
+  archive: (task) => task.isArchive
+}
+
 
 class TasksModel {
   constructor() {
@@ -37,7 +47,9 @@ class TasksModel {
     this._tasks.some((task, i) => {
       if (task.id === id) {
         this._tasks[i] = newTask;
+
         this._taskRenewHandler();
+        this._filterTasks();
         this.recoveryListeners();
         return true;
       }
@@ -64,57 +76,7 @@ class TasksModel {
   }
 
   _filterTasks() {
-    this._filteredTasks = [];
-    switch (this._activeFilter) {
-      case `all`:
-        this._filteredTasks = this._tasks;
-        break;
-      case `overdue`:
-        this._tasks.forEach((task) => {
-          if (isOverdue(task.dueDate)) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      case `today`:
-        this._tasks.forEach((task) => {
-          if (isToday(task.dueDate)) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      case `favorite`:
-        this._tasks.forEach((task) => {
-          if (task.isFavorite) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      case `repeating`:
-        this._tasks.forEach((task) => {
-          if (isRepeating(task.repeatingDays)) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      case `tags`:
-        this._tasks.forEach((task) => {
-          if (task.tags.size) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      case `archive`:
-        this._tasks.forEach((task) => {
-          if (task.isArchive) {
-            this._filteredTasks.push(task);
-          }
-        });
-        break;
-      default:
-        break;
-    }
-
+    this._filteredTasks = this._tasks.filter(filterToCondition[this._activeFilter]);
     this._changeFilterHandler(this._filteredTasks);
   }
 }

@@ -6,6 +6,7 @@ import LoadMoreButton from '../components/button.js';
 import {isNotActive} from '../utils/utils.js';
 import {CARD_SHOWING} from '../const.js';
 import TaskController from './taskController.js';
+import {isRepeating, isOverdue, isToday} from '../utils/filter.js';
 
 const FIRST_ELEMENT = 0;
 
@@ -48,16 +49,7 @@ class BoardController {
 
   render() {
     this._tasksModel.setChangeFilterHandler(() => {
-      this._container.getElement().innerHTML = ``;
-
-      this._showedTaskCount = FIRST_ELEMENT;
-
-      this._noTaskComponent = new NoTask();
-      this._sortComponent = new Sort();
-      this._boardTasks = new BoardTasks();
-      this._loadMoreButton = new LoadMoreButton();
-
-      this.render();
+      this._rerenderBoard();
     });
 
     const tasks = this._tasksModel.getFilteredTasks();
@@ -97,10 +89,34 @@ class BoardController {
     this._loadMoreButton.setClickHandler(loadMoreClickHandler);
   }
 
-  _dataChangeHandler(taskController, id, newTask) {
-    this._tasksModel.renewTask(id, newTask);
+  _dataChangeHandler(taskController, oldTask, newTask) {
+    this._tasksModel.renewTask(oldTask.id, newTask);
 
-    taskController.render(newTask);
+    const isRerenderAll = oldTask.isFavorite !== newTask.isFavorite
+      || oldTask.isArchive !== newTask.isArchive
+      || isRepeating(oldTask) !== isRepeating(newTask)
+      || isOverdue(oldTask) !== isOverdue(newTask)
+      || oldTask.tags.size !== newTask.tags.size
+      || isToday(oldTask) !== isToday(newTask)
+
+    if (isRerenderAll) {
+      this._rerenderBoard();
+    } else {
+      taskController.render(newTask);
+    }
+  }
+
+  _rerenderBoard() {
+    this._container.getElement().innerHTML = ``;
+
+    this._showedTaskCount = FIRST_ELEMENT;
+
+    this._noTaskComponent = new NoTask();
+    this._sortComponent = new Sort();
+    this._boardTasks = new BoardTasks();
+    this._loadMoreButton = new LoadMoreButton();
+
+    this.render();
   }
 
   _viewChangeHandler() {

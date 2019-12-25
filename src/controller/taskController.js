@@ -42,20 +42,20 @@ class TaskController {
       const newTask = Object.assign({}, task, {
         isFavorite: !task.isFavorite
       });
-      this._dataChangeHandler(this, task.id, newTask);
+      this._dataChangeHandler(this, task, newTask);
     });
 
     this._card.setArchiveHandler(() => {
       const newTask = Object.assign({}, task, {
         isArchive: !task.isArchive
       });
-      this._dataChangeHandler(this, task.id, newTask);
+      this._dataChangeHandler(this, task, newTask);
     });
 
     this._cardEdit.setSubmitHandler(() => {
       const newTask = Object.assign({}, task, this._cardEdit.getChangedInfo());
 
-      this._dataChangeHandler(this, task.id, newTask);
+      this._dataChangeHandler(this, task, newTask);
       this.replaceEditToCard();
 
       document.removeEventListener(`keydown`, this._escDownHandler);
