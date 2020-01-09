@@ -1,6 +1,16 @@
 import {FILTERS} from '../const.js';
 import moment from 'moment';
 
+const filterToCondition = {
+  all: (task) => !task.isArchive,
+  overdue: (task) => isOverdue(task.dueDate) && !task.isArchive,
+  today: (task) => isToday(task.dueDate) && !task.isArchive,
+  favorite: (task) => task.isFavorite && !task.isArchive,
+  repeating: (task) => isRepeating(task.repeatingDays) && !task.isArchive,
+  tags: (task) => task.tags.size && !task.isArchive,
+  archive: (task) => task.isArchive
+};
+
 const isOverdue = (date) => {
   return date instanceof Date && moment(date).isBefore(moment());
 };
@@ -21,30 +31,9 @@ const isRepeating = (days) => {
 const getFilterToCount = (tasks) => {
   const filterToCount = {};
   FILTERS.forEach((el) => {
-    filterToCount[el] = 0;
+    filterToCount[el] = tasks.filter(filterToCondition[el]).length;
   });
-  filterToCount[`all`] = tasks.length;
-  tasks.forEach((element) => {
-    if (element.isArchive) {
-      filterToCount[`archive`] += 1;
-    } else {
-      if (isOverdue(element.dueDate)) {
-        filterToCount[`overdue`] += 1;
-      }
-      if (isToday(element.dueDate)) {
-        filterToCount[`today`] += 1;
-      }
-      if (element.isFavorite) {
-        filterToCount[`favorite`] += 1;
-      }
-      if (isRepeating(element.repeatingDays)) {
-        filterToCount[`repeating`] += 1;
-      }
-      if (element.tags.size) {
-        filterToCount[`tags`] += 1;
-      }
-    }
-  });
+
   return filterToCount;
 };
 
@@ -59,4 +48,4 @@ const getFiltersCounters = (tasks) => {
   return filterList;
 };
 
-export {isOverdue, isToday, isRepeating, getFiltersCounters};
+export {isOverdue, isToday, isRepeating, getFiltersCounters, filterToCondition};

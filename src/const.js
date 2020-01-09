@@ -22,6 +22,16 @@ const MONTH = [
   `December`
 ];
 
+const DEFAULT_REPEATING_DAYS = {
+  'mo': false,
+  'tu': false,
+  'we': false,
+  'th': false,
+  'fr': false,
+  'sa': false,
+  'su': false,
+};
+
 const FILTERS = [`all`, `overdue`, `today`, `favorite`, `repeating`, `tags`, `archive`];
 
 const RenderPosition = {
@@ -32,4 +42,4 @@ const RenderPosition = {
 const KEY_CODE_ESC = 27;
 const CARD_SHOWING = 8;
 
-export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS, RenderPosition, KEY_CODE_ESC, CARD_SHOWING};
+export {DESCRIPTION_ITEMS, TAGS, COLORS, MONTH, FILTERS, RenderPosition, KEY_CODE_ESC, CARD_SHOWING, DEFAULT_REPEATING_DAYS};

@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import AbstractSmartComponent from './abstractSmartComponent.js';
-import {COLORS} from '../const.js';
+import {COLORS, DEFAULT_REPEATING_DAYS} from '../const.js';
 import {createDate, createTime, createHashtag} from '../utils/utils.js';
 import moment from 'moment';
 require(`flatpickr/dist/flatpickr.min.css`);
@@ -73,9 +73,9 @@ const createColorMarkup = (colorStatus) => {
   return colorsFragment;
 };
 
-const createCardEditTemplate = (task, isDateShowing, dueDate, isRepeating, repeatingDays) => {
-  let {description, tags, color} = task;
-
+const createCardEditTemplate = (task, parameters) => {
+  const {description, tags, color} = task;
+  const {isDateShowing, dueDate, isRepeating, repeatingDays} = parameters;
 
   const deadlineStatus = isDateShowing ? `yes` : `no`;
   const deadlineAttr = isDateShowing ? `` : `disabled`;
@@ -178,8 +178,8 @@ const createCardEditTemplate = (task, isDateShowing, dueDate, isRepeating, repea
   );
 };
 
-class CardEdit extends AbstractSmartComponent {
 
+class CardEdit extends AbstractSmartComponent {
   constructor(task) {
     super();
     this._task = task;
@@ -193,12 +193,16 @@ class CardEdit extends AbstractSmartComponent {
     this._applyFlatpickr();
 
     this._submitHandler = null;
+    this._deleteHandler = null;
     this._subscribeOnEvents();
+
+    this.removeCalendar = this.removeCalendar.bind(this);
   }
 
   recoveryListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
+    this.setDeleteHandler(this._deleteHandler);
   }
 
   setSubmitHandler(handler) {
@@ -210,20 +214,31 @@ class CardEdit extends AbstractSmartComponent {
     editCardForm.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
 
+      const formData = this._parseFormData(editCardForm);
+      handler(formData);
+    });
+  }
+
+  setDeleteHandler(handler) {
+    if (!this._deleteHandler) {
+      this._deleteHandler = handler;
+    }
+
+    const delButton = this.getElement().querySelector(`.card__delete`);
+    delButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
       handler();
     });
   }
 
   getTemplate() {
-    return createCardEditTemplate(this._task, this._isDateShowing, this._date, this._isRepeating, this._repeatingDays);
-  }
-
-
-  getChangedInfo() {
-    return {
+    return createCardEditTemplate(this._task, {
+      isDateShowing: this._isDateShowing,
+      isRepeating: this._isRepeating,
       repeatingDays: this._repeatingDays,
-      dueDate: this._date
-    };
+      dueDate: this._date,
+    });
   }
 
   rerender() {
@@ -234,18 +249,24 @@ class CardEdit extends AbstractSmartComponent {
 
   reset() {
     const task = this._task;
+
     this._isDateShowing = !!task.dueDate;
     this._isRepeating = Object.values(task.repeatingDays).some(Boolean);
     this._repeatingDays = Object.assign({}, task.repeatingDays);
+    this._date = task.dueDate;
 
     this.rerender();
   }
 
-  _applyFlatpickr() {
+  removeCalendar() {
     if (this._flatpickr) {
       this._flatpickr.destroy();
       this._flatpickr = null;
     }
+  }
+
+  _applyFlatpickr() {
+    this.removeCalendar();
 
     if (this._isDateShowing) {
       const dateElement = this.getElement().querySelector(`.card__date`);
@@ -275,6 +296,7 @@ class CardEdit extends AbstractSmartComponent {
 
     if (this._isDateShowing) {
       const dateInput = element.querySelector(`.card__date`);
+
       dateInput.addEventListener(`change`, (evt) => {
         this._date = moment(evt.target.value).toDate();
 
@@ -290,7 +312,6 @@ class CardEdit extends AbstractSmartComponent {
         Object.keys(this._repeatingDays).forEach((day) => {
           this._repeatingDays[day] = false;
         });
-
       }
 
       this.rerender();
@@ -299,11 +320,32 @@ class CardEdit extends AbstractSmartComponent {
     const cardRepeatDays = element.querySelectorAll(`.card__repeat-day-input`);
     cardRepeatDays.forEach((day) => {
       day.addEventListener(`click`, (evt) => {
+
         this._repeatingDays[evt.target.value] = evt.target.checked;
 
         this.rerender();
       });
     });
+  }
+
+  _parseFormData(form) {
+    const formData = new FormData(form);
+    const result = {};
+
+    result.description = formData.get(`text`);
+    result.dueDate = this._isDateShowing ? moment(formData.get(`date`)).toDate() : null;
+
+    if (this._isRepeating) {
+      result.repeatingDays = Object.assign({}, DEFAULT_REPEATING_DAYS);
+      formData.getAll(`repeat`).forEach((day) => (result.repeatingDays[day] = true));
+    } else {
+      result.repeatingDays = DEFAULT_REPEATING_DAYS;
+    }
+
+    result.tags = formData.get(`hashtag-input`);
+    result.color = formData.get(`color`);
+
+    return result;
   }
 }
 

@@ -30,3 +30,12 @@ render(board, main);
 const boardController = new BoardController(tasksModel, board);
 boardController.render();
 
+menu.getElement().addEventListener(`change`, (evt) => {
+  evt.preventDefault();
+
+  if (evt.target.id === `control__new-task`) {
+    boardController.addNewTask();
+
+    menu.getElement().querySelector(`#control__task`).checked = true;
+  }
+});

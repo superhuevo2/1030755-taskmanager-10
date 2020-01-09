@@ -1,4 +1,5 @@
 import moment from 'moment';
+import {COLORS, DEFAULT_REPEATING_DAYS} from '../const.js';
 
 const createElement = (template) => {
   const element = document.createElement(`div`);
@@ -34,5 +35,33 @@ const createHashtag = (tagSet) => {
   return fragment;
 };
 
+const mergeTaskData = (task, newData) => {
+  return {
+    description: newData.description,
+    dueDate: newData.dueDate,
+    repeatingDays: newData.repeatingDays,
+    tags: newData.tags ? new Set([].concat([...task.tags], newData.tags.split(` `))) : task.tags,
+    color: newData.color,
+    isFavorite: task.isFavorite,
+    isArchive: task.isArchive,
+    id: task.id
+  };
+};
 
-export {createElement, createDate, createTime, isNotActive, createHashtag};
+
+const createEmptyTask = () => {
+  return {
+    description: ``,
+    dueDate: null,
+    repeatingDays: DEFAULT_REPEATING_DAYS,
+    tags: new Set(),
+    color: COLORS[0],
+    isFavorite: false,
+    isArchive: false,
+    id: ``
+  };
+};
+
+const EMPTY_TASK = createEmptyTask();
+
+export {createElement, createDate, createTime, isNotActive, createHashtag, mergeTaskData, createEmptyTask, EMPTY_TASK};

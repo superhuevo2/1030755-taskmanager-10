@@ -36,6 +36,16 @@ const createMenuTemplate = () => {
 
 class Menu extends AbstractComponent {
 
+  setClickNewTaskHandler(handler) {
+    const newTaskBtn = this.getElement().querySelector(`.input#control__new-task`);
+
+    newTaskBtn.addEventListener(`change`, (evt) => {
+      evt.preventDefault();
+
+      handler();
+    });
+  }
+
   getTemplate() {
     return createMenuTemplate();
   }

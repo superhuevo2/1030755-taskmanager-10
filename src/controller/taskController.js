@@ -1,10 +1,13 @@
 import Card from "../components/card.js";
 import CardEdit from "../components/cardEdit.js";
 import {render, replaceComponent, removeComponent} from "../utils/render.js";
+import {RenderPosition} from '../const.js';
+import {mergeTaskData, EMPTY_TASK} from "../utils/utils.js";
 
 const ViewState = {
   DEFAULT: `default`,
-  EDIT: `edit`
+  EDIT: `edit`,
+  ADDING: `adding`
 };
 
 
@@ -27,39 +30,13 @@ class TaskController {
     const oldCard = this._card;
     const oldCardEdit = this._cardEdit;
 
+    const isNewTask = false;
 
     this._card = new Card(task);
     this._cardEdit = new CardEdit(task);
 
-    this._card.setEditHandler(() => {
-      this._viewChangeHandler();
-      this.replaceCardToEdit();
-
-      document.addEventListener(`keydown`, this._escDownHandler);
-    });
-
-    this._card.setFavoritesHandler(() => {
-      const newTask = Object.assign({}, task, {
-        isFavorite: !task.isFavorite
-      });
-      this._dataChangeHandler(this, task, newTask);
-    });
-
-    this._card.setArchiveHandler(() => {
-      const newTask = Object.assign({}, task, {
-        isArchive: !task.isArchive
-      });
-      this._dataChangeHandler(this, task, newTask);
-    });
-
-    this._cardEdit.setSubmitHandler(() => {
-      const newTask = Object.assign({}, task, this._cardEdit.getChangedInfo());
-
-      this._dataChangeHandler(this, task, newTask);
-      this.replaceEditToCard();
-
-      document.removeEventListener(`keydown`, this._escDownHandler);
-    });
+    this._setCardListeners(this._card, task);
+    this._setCardEditListeners(this._cardEdit, task, isNewTask);
 
     if (oldCard && oldCardEdit) {
       replaceComponent(this._card, oldCard);
@@ -67,11 +44,26 @@ class TaskController {
     } else {
       render(this._card, this._container);
     }
+  }
 
+  renderNewTask() {
+    let isNewTask = true;
+    this._viewState = ViewState.ADDING;
+
+    const emptyTask = EMPTY_TASK;
+
+    this._card = new Card(emptyTask);
+    this._cardEdit = new CardEdit(emptyTask);
+
+    render(this._cardEdit, this._container, RenderPosition.AFTERBEGIN);
+    this._setCardEditListeners(this._cardEdit, emptyTask, isNewTask);
+
+    document.addEventListener(`keydown`, this._escDownHandler);
   }
 
   remove() {
     removeComponent(this._card);
+    this._cardEdit.removeCalendar();
     removeComponent(this._cardEdit);
   }
 
@@ -94,6 +86,53 @@ class TaskController {
 
       document.removeEventListener(`keydown`, this._escDownHandler);
     }
+  }
+
+  _setCardListeners(card, task) {
+    card.setEditHandler(() => {
+      this._viewChangeHandler();
+      this.replaceCardToEdit();
+
+      document.addEventListener(`keydown`, this._escDownHandler);
+    });
+
+    card.setFavoritesHandler(() => {
+      const newTask = Object.assign({}, task, {
+        isFavorite: !task.isFavorite
+      });
+      this._dataChangeHandler(this, task, newTask);
+    });
+
+    card.setArchiveHandler(() => {
+      const newTask = Object.assign({}, task, {
+        isArchive: !task.isArchive
+      });
+      this._dataChangeHandler(this, task, newTask);
+    });
+  }
+
+  _setCardEditListeners(cardEdit, task, isNewTask) {
+    cardEdit.setSubmitHandler((parsedFormData) => {
+      const newTask = mergeTaskData(task, parsedFormData);
+      let oldTask;
+
+      if (isNewTask) {
+        oldTask = null;
+        newTask.id = Date.now() + Math.random();
+      } else {
+        oldTask = task;
+      }
+
+      this._dataChangeHandler(this, oldTask, newTask);
+
+      this.replaceEditToCard();
+
+      document.removeEventListener(`keydown`, this._escDownHandler);
+    });
+
+    this._cardEdit.setDeleteHandler(() => {
+      this._dataChangeHandler(this, task, null);
+    });
   }
 
   _escDownHandler(evt) {

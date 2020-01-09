@@ -1,29 +1,14 @@
-import {isOverdue, isToday, isRepeating} from '../utils/filter.js';
-
-const filterToCondition = {
-  all: () => true,
-  overdue: (task) => isOverdue(task.dueDate) && !task.isArchive,
-  today: (task) => isToday(task.dueDate) && !task.isArchive,
-  favorite: (task) => task.isFavorite && !task.isArchive,
-  repeating: (task) => isRepeating(task) && !task.isArchive,
-  tags: (task) => task.tags.size && !task.isArchive,
-  archive: (task) => task.isArchive
-}
+import {filterToCondition} from '../utils/filter.js';
 
 
 class TasksModel {
   constructor() {
     this._tasks = [];
-    this._filteredTasks = [];
     this._activeFilter = `all`;
 
-    this._taskRenewHandler = null;
     this._changeFilterHandler = null;
+    this._dataChangeHandler = null;
 
-  }
-
-  recoveryListeners() {
-    this.setChangeFilterHandler(this._changeFilterHandler);
   }
 
   getTasks() {
@@ -31,16 +16,17 @@ class TasksModel {
   }
 
   getFilteredTasks() {
-    switch (this._activeFilter) {
-      case `all`:
-        return this._tasks;
-      default:
-        return this._filteredTasks;
-    }
+    return this._filterTasks();
   }
 
   setTasks(tasks) {
-    this._tasks = tasks;
+    this._tasks = Array.from(tasks);
+  }
+
+  addTask(newTask) {
+    this._tasks.unshift(newTask);
+
+    this._dataChangeHandler();
   }
 
   renewTask(id, newTask) {
@@ -48,13 +34,17 @@ class TasksModel {
       if (task.id === id) {
         this._tasks[i] = newTask;
 
-        this._taskRenewHandler();
-        this._filterTasks();
-        this.recoveryListeners();
+        this._dataChangeHandler();
         return true;
       }
       return false;
     });
+  }
+
+  deleteTask(id) {
+    this._tasks = this._tasks.filter((task) => task.id !== id);
+
+    this._dataChangeHandler();
   }
 
   getActiveFilter() {
@@ -63,21 +53,20 @@ class TasksModel {
 
   setActiveFilter(filter) {
     this._activeFilter = filter;
-    this._filterTasks();
 
-  }
-
-  setTaskRenewHandler(handler) {
-    this._taskRenewHandler = handler;
+    this._changeFilterHandler();
   }
 
   setChangeFilterHandler(handler) {
     this._changeFilterHandler = handler;
   }
 
+  setDataChangeHandler(handler) {
+    this._dataChangeHandler = handler;
+  }
+
   _filterTasks() {
-    this._filteredTasks = this._tasks.filter(filterToCondition[this._activeFilter]);
-    this._changeFilterHandler(this._filteredTasks);
+    return this._tasks.filter(filterToCondition[this._activeFilter]);
   }
 }
 
